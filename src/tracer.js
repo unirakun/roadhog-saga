@@ -44,7 +44,7 @@ import { put } from 'redux-saga/effects'
 // Event caught by saga with template starting with 'API_'
 const apiEvent = (name, suffix, payload) => ({ type: `API_${name}_${suffix}`, payload })
 
-/*
+/**
  Tracer :
  @param {string} name - use to identify the saga event.
  @param {function} callback - the fetch to trace.
