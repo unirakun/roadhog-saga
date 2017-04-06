@@ -101,7 +101,7 @@ export default action => function* (params) {
       }
     } else {
       // throw Exception if action key is malformed.
-      throw new Error(`The action '${action}' is malformed, the template of action is like this 'METHOD_RESOURCES' (ie: GET_USERS)`)
+      throw new Error(`Wrong format for action: '${action}'. should be 'METHOD_RESOURCES' (ie: GET_USERS)`)
     }
   }
 

@@ -41,13 +41,14 @@
 */
 import { put } from 'redux-saga/effects'
 
-// Event catch by saga with template start by 'API_'
+// Event caught by saga with template starting with 'API_'
 const apiEvent = (name, suffix, payload) => ({ type: `API_${name}_${suffix}`, payload })
 
 /*
  Tracer :
- @param {string} name - use for identify saga event.
+ @param {string} name - use to identify the saga event.
  @param {function} callback - the fetch to trace.
+ @return {object} response of callback.
  */
 export default (name, callback, sendError) => function* (args) {
   let raw
@@ -57,7 +58,7 @@ export default (name, callback, sendError) => function* (args) {
     raw = yield callback(args)
     // Push saga event.
     if (!raw.ok && sendError) {
-      throw new Error(`the fetch response is on error : ${raw.status} - ${raw.statusText}`)
+      throw new Error(`the fetch response has an error : ${raw.status} - ${raw.statusText}`)
     }
   } catch (ex) {
     // We should not be here in any way
