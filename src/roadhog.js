@@ -75,8 +75,10 @@ const addQueryParams = (url, queryParams) => {
 
 /**
  * Library that is connected to redux, use to fetch api, and to dispatch saga event
- * @param {string|object} action - the template of action is like this 'METHOD_RESOURCES' => GET_USERS
- * @param {object} params - object contains query and path params => {queryParams: {id: 1}, pathParams: [user, 132]}
+ * @param {string|object} action -
+ *   the template of action is like this 'METHOD_RESOURCES' => GET_USERS
+ * @param {object} params -
+ *   object contains query and path params => {queryParams: {id: 1}, pathParams: [user, 132]}
  * @return {object} - api response or fallback define on redux.
  */
 export default action => function* (params) {
@@ -90,10 +92,10 @@ export default action => function* (params) {
   if (typeof action === 'string') {
     if (/.*_.*/.test(action)) {
       // retrieve resource urls.
-      const [method, resource] = action.split(/_(.+)/)
+      const [method, name] = action.split(/_(.+)/)
       const api = yield select(apiSelector)
 
-      const resource = api[resource][method]
+      const resource = api[name][method]
       if (typeof resource === 'string') url = resource
       if (typeof resource === 'object') {
         url = resource.url
