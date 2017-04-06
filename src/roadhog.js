@@ -90,10 +90,10 @@ export default action => function* (params) {
   if (typeof action === 'string') {
     if (/.*_.*/.test(action)) {
       // retrieve resource urls.
-      const splitAction = action.split(/_(.+)/)
+      const [method, resource] = action.split(/_(.+)/)
       const api = yield select(apiSelector)
 
-      const resource = api[splitAction[1]][splitAction[0]]
+      const resource = api[resource][method]
       if (typeof resource === 'string') url = resource
       if (typeof resource === 'object') {
         url = resource.url
