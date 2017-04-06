@@ -63,8 +63,6 @@ export default (name, callback, sendError) => function* (args) {
     // We should not be here in any way
     // But we handle it just in case
     yield put(apiEvent(name, 'ERROR', ex))
-    // this error is just for call fallback on caller.
-    throw new Error(`Error occured - ${ex}`)
   }
   // Finish Event
   yield put(apiEvent(name, 'END'))

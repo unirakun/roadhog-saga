@@ -66,19 +66,19 @@ import tracer from './tracer'
 const apiSelector = ({ config: { api } }) => api
 
 // Add all params to path url.
-const addPathParams = (url, pathParams) => {
-  if (Array.isArray(pathParams) && pathParams.length > 0) return `${url}/${pathParams.join('/')}`
-  return url
-}
+const addPathParams = (url, pathParams) => `${url}/${pathParams.join('/')}`
 // Add all params to the query on url.
 const addQueryParams = (url, queryParams) => {
-  if (typeof queryParams === 'object' && Object.keys(queryParams).length > 0) {
-    const params = Object.keys(queryParams).map((k => `${k}=${queryParams[k]}`))
-    return `${url}?${params.join('&')}`
-  }
-  return url
+  const params = Object.keys(queryParams).map((k => `${k}=${queryParams[k]}`))
+  return `${url}?${params.join('&')}`
 }
 
+/**
+ * Library that is connected to redux, use to fetch api, and to dispatch saga event
+ * @param {string|object} action - the template of action is like this 'METHOD_RESOURCES' => GET_USERS
+ * @param {object} params - object contains query and path params => {queryParams: {id: 1}, pathParams: [user, 132]}
+ * @return {object} - api response or fallback define on redux.
+ */
 export default action => function* (params) {
   const pathParams = (params && params.pathParams) || []
   const queryParams = (params && params.queryParams) || {}
