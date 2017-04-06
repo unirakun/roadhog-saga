@@ -45,10 +45,10 @@ import { put } from 'redux-saga/effects'
 const apiEvent = (name, suffix, payload) => ({ type: `API_${name}_${suffix}`, payload })
 
 /**
- Tracer :
- @param {string} name - use to identify the saga event.
- @param {function} callback - the fetch to trace.
- @return {object} response of callback.
+ * Tracer :
+ * @param {string} name - use to identify the saga event.
+ * @param {function} callback - the fetch to trace.
+ * @return {object} response of callback.
  */
 export default (name, callback, sendError) => function* (args) {
   let raw
