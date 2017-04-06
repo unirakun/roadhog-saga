@@ -60,26 +60,31 @@
       .::,                               .:::
 */
 import { select } from 'redux-saga/effects'
-import { join } from 'lodash'
 import tracer from './tracer'
 
 // Reducer config > api is mandatory.
-export const apiSelector = ({ config: { api }}) => api
+const apiSelector = ({ config: { api } }) => api
 
 // Add all params to path url.
-const addPathParams = (url, pathParams) => `${url}/${join(pathParams, '/')}`
+const addPathParams = (url, pathParams) => {
+  if (Array.isArray(pathParams) && pathParams.length > 0) return `${url}/${pathParams.join('/')}`
+  return url
+}
 // Add all params to the query on url.
 const addQueryParams = (url, queryParams) => {
-  const params = Object.keys(queryParams).map((k => `${k}=${queryParams[k]}`))
-  return `${url}?${join(params, '&')}`
+  if (typeof queryParams === 'object' && Object.keys(queryParams).length > 0) {
+    const params = Object.keys(queryParams).map((k => `${k}=${queryParams[k]}`))
+    return `${url}?${params.join('&')}`
+  }
+  return url
 }
 
 export default action => function* (params) {
   const pathParams = (params && params.pathParams) || []
   const queryParams = (params && params.queryParams) || {}
 
-  let url = null
-  let fallback = undefined
+  let url
+  let fallback
 
   // Check url redux
   if (typeof action === 'string') {
@@ -88,15 +93,19 @@ export default action => function* (params) {
       const splitAction = action.split(/_(.+)/)
       const api = yield select(apiSelector)
 
-      url = api[splitAction[1]][splitAction[0]]
-      fallback = api[splitAction[1]].fallback
+      const resource = api[splitAction[1]][splitAction[0]]
+      if (typeof resource === 'string') url = resource
+      if (typeof resource === 'object') {
+        url = resource.url
+        fallback = resource.fallback
+      }
     } else {
       // throw Exception if action key is malformed.
       throw new Error(`The action '${action}' is malformed, the template of action is like this 'METHOD_RESOURCES' (ie: GET_USERS)`)
     }
   }
 
-  // if action is an object
+  // action is an object
   if (typeof action === 'object') {
     // the property url is mandatory
     if (action.url) {
@@ -107,9 +116,12 @@ export default action => function* (params) {
   }
 
   // build url with path params.
-  if (Array.isArray(pathParams)) url = addPathParams(url, pathParams)
+  url = addPathParams(url, pathParams)
   // build url with query params.
-  if (typeof queryParams === 'object') url = addQueryParams(url, queryParams)
+  url = addQueryParams(url, queryParams)
 
-  return yield tracer(action, () => fetch(url), fallback)()
+  // Call tracer : fetch resource and dispatch event error - if necessary -
+  const raw = yield tracer(action, () => fetch(url), !fallback)()
+
+  return yield raw.ok ? raw.json() : fallback
 }

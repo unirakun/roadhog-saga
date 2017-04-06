@@ -44,35 +44,29 @@ import { put } from 'redux-saga/effects'
 // Event catch by saga with template start by 'API_'
 const apiEvent = (name, suffix, payload) => ({ type: `API_${name}_${suffix}`, payload })
 
-function* trace(raw, name, dataFallback) {
-  const { status } = raw
-  console.info(status)
-
-  // We log an error into redux only if no fallback are found
-  if (!dataFallback) yield put(apiEvent(name, 'ERROR', { code: raw.status, text: raw.statusText }))
-
-  return dataFallback
-}
-
 /*
- name : use for identify saga event.
- callback: the function to trace.
- fallback: if callback fail, the fallback is use.
+ Tracer :
+ @param {string} name - use for identify saga event.
+ @param {function} callback - the fetch to trace.
  */
-export default (name, callback, fallback) => function* (args) {
-  let json
-
+export default (name, callback, sendError) => function* (args) {
+  let raw
   try {
+    // Start Event
     yield put(apiEvent(name, 'STARTED'))
-    const raw = yield callback(args)
-    json = raw.ok ? yield raw.json() : yield trace(raw, name, fallback)
+    raw = yield callback(args)
+    // Push saga event.
+    if (!raw.ok && sendError) {
+      throw new Error(`the fetch response is on error : ${raw.status} - ${raw.statusText}`)
+    }
   } catch (ex) {
     // We should not be here in any way
     // But we handle it just in case
-    console.error(ex)
     yield put(apiEvent(name, 'ERROR', ex))
+    // this error is just for call fallback on caller.
+    throw new Error(`Error occured - ${ex}`)
   }
-
+  // Finish Event
   yield put(apiEvent(name, 'END'))
-  return json
+  return raw
 }
