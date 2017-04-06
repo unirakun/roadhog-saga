@@ -1,2 +1,4 @@
 # roadhog
-Fetch your api easily
+
+## Description
+Library that is connected to redux, use to fetch api, and to dispatch saga event
