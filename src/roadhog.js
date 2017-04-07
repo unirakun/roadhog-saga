@@ -62,7 +62,7 @@
 import { select } from 'redux-saga/effects'
 import tracer from './tracer'
 
-const isEmpty = o => {
+const isEmpty = (o) => {
   return !o ||
     ((typeof o === 'object' && Object.keys(o).length === 0) ||
     (Array.isArray(o) && o.length === 0))
@@ -74,7 +74,7 @@ const apiSelector = ({ config: { api } }) => api
 const mocksSelector = ({ config: { mocks } }) => mocks
 
 // Add all params to path url.
-const addPathParams = (url, pathParams) => !isEmpty(pathParams) ? `${url}/${pathParams.join('/')}` : url
+const addPathParams = (url, pathParams) => (!isEmpty(pathParams) ? `${url}/${pathParams.join('/')}` : url)
 // Add all params to the query on url.
 const addQueryParams = (url, queryParams) => {
   if (!isEmpty(queryParams)) {
@@ -92,7 +92,7 @@ const addQueryParams = (url, queryParams) => {
  *   object contains query and path params => {queryParams: {id: 1}, pathParams: [user, 132]}
  * @return {object} - api response or fallback define on redux.
  */
-export default action => function*(params) {
+export default action => function* (params) {
   const pathParams = (params && params.pathParams) || []
   const queryParams = (params && params.queryParams) || {}
 
@@ -133,7 +133,6 @@ export default action => function*(params) {
   const mocks = yield select(mocksSelector)
   // get fallback on redux mocks
   const mock = (mocks || []).find(m => m.match.test(url))
-  console.log(url, mock)
   const fallback = mock && mock.fallback
 
   // Call tracer : fetch resource and dispatch event error - if necessary -

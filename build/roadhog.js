@@ -193,26 +193,24 @@ exports.default = function (action) {
             mock = (mocks || []).find(function (m) {
               return m.match.test(url);
             });
-
-            console.log(url, mock);
             fallback = mock && mock.fallback;
 
             // Call tracer : fetch resource and dispatch event error - if necessary -
 
-            _context.next = 31;
+            _context.next = 30;
             return (0, _tracer2.default)(action, function () {
               return fetch(url);
             }, !fallback)();
 
-          case 31:
+          case 30:
             raw = _context.sent;
-            _context.next = 34;
+            _context.next = 33;
             return raw.ok ? raw.json() : fallback;
 
-          case 34:
+          case 33:
             return _context.abrupt('return', _context.sent);
 
-          case 35:
+          case 34:
           case 'end':
             return _context.stop();
         }
