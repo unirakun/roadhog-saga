@@ -64,6 +64,9 @@ import tracer from './tracer'
 
 // Reducer config > api is mandatory.
 const apiSelector = ({ config: { api } }) => api
+// Reducer config > mocks
+const mocksSelector = ({ config: { mocks } }) => mocks
+
 
 // Add all params to path url.
 const addPathParams = (url, pathParams) => `${url}/${pathParams.join('/')}`
@@ -86,7 +89,6 @@ export default action => function* (params) {
   const queryParams = (params && params.queryParams) || {}
 
   let url
-  let fallback
 
   // Check url redux
   if (typeof action === 'string') {
@@ -99,7 +101,6 @@ export default action => function* (params) {
       if (typeof resource === 'string') url = resource
       if (typeof resource === 'object') {
         url = resource.url
-        fallback = resource.fallback
       }
     } else {
       // throw Exception if action key is malformed.
@@ -121,6 +122,11 @@ export default action => function* (params) {
   url = addPathParams(url, pathParams)
   // build url with query params.
   url = addQueryParams(url, queryParams)
+
+  // Retrieve mock on redux
+  const mocks = yield select(mocksSelector)
+  // get fallback on redux mocks
+  const fallback = mocks.find(m => m.match.test(url)).fallback
 
   // Call tracer : fetch resource and dispatch event error - if necessary -
   const raw = yield tracer(action, () => fetch(url), !fallback)()
