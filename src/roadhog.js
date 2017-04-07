@@ -62,15 +62,26 @@
 import { select } from 'redux-saga/effects'
 import tracer from './tracer'
 
+const isEmpty = (o) => {
+  return !o ||
+    ((typeof o === 'object' && Object.keys(o).length === 0) ||
+    (Array.isArray(o) && o.length === 0))
+}
+
 // Reducer config > api is mandatory.
 const apiSelector = ({ config: { api } }) => api
+// Reducer config > mocks
+const mocksSelector = ({ config: { mocks } }) => mocks
 
 // Add all params to path url.
-const addPathParams = (url, pathParams) => `${url}/${pathParams.join('/')}`
+const addPathParams = (url, pathParams) => (!isEmpty(pathParams) ? `${url}/${pathParams.join('/')}` : url)
 // Add all params to the query on url.
 const addQueryParams = (url, queryParams) => {
-  const params = Object.keys(queryParams).map((k => `${k}=${queryParams[k]}`))
-  return `${url}?${params.join('&')}`
+  if (!isEmpty(queryParams)) {
+    const params = Object.keys(queryParams).map((k => `${k}=${queryParams[k]}`))
+    return `${url}?${params.join('&')}`
+  }
+  return url
 }
 
 /**
@@ -86,7 +97,6 @@ export default action => function* (params) {
   const queryParams = (params && params.queryParams) || {}
 
   let url
-  let fallback
 
   // Check url redux
   if (typeof action === 'string') {
@@ -97,10 +107,7 @@ export default action => function* (params) {
 
       const resource = api[name][method]
       if (typeof resource === 'string') url = resource
-      if (typeof resource === 'object') {
-        url = resource.url
-        fallback = resource.fallback
-      }
+      if (typeof resource === 'object') url = resource.url
     } else {
       // throw Exception if action key is malformed.
       throw new Error(`Wrong format for action: '${action}'. should be 'METHOD_RESOURCES' (ie: GET_USERS)`)
@@ -121,6 +128,12 @@ export default action => function* (params) {
   url = addPathParams(url, pathParams)
   // build url with query params.
   url = addQueryParams(url, queryParams)
+
+  // Retrieve mock on redux
+  const mocks = yield select(mocksSelector)
+  // get fallback on redux mocks
+  const mock = (mocks || []).find(m => m.match.test(url))
+  const fallback = mock && mock.fallback
 
   // Call tracer : fetch resource and dispatch event error - if necessary -
   const raw = yield tracer(action, () => fetch(url), !fallback)()

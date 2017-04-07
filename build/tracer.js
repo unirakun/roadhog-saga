@@ -6,15 +6,16 @@ Object.defineProperty(exports, "__esModule", {
 
 var _effects = require('redux-saga/effects');
 
-// Event catch by saga with template start by 'API_'
+// Event caught by saga with template starting with 'API_'
 var apiEvent = function apiEvent(name, suffix, payload) {
   return { type: 'API_' + name + '_' + suffix, payload: payload };
 };
 
-/*
- Tracer :
- @param {string} name - use for identify saga event.
- @param {function} callback - the fetch to trace.
+/**
+ * Tracer :
+ * @param {string} name - use to identify the saga event.
+ * @param {function} callback - the fetch to trace.
+ * @return {object} response of callback.
  */
 /*
            ``
@@ -82,10 +83,10 @@ exports.default = function (name, callback, sendError) {
               break;
             }
 
-            throw new Error('the fetch response is on error : ' + raw.status + ' - ' + raw.statusText);
+            throw new Error('the fetch response has an error : ' + raw.status + ' - ' + raw.statusText);
 
           case 9:
-            _context.next = 16;
+            _context.next = 15;
             break;
 
           case 11:
@@ -95,16 +96,13 @@ exports.default = function (name, callback, sendError) {
             return (0, _effects.put)(apiEvent(name, 'ERROR', _context.t0));
 
           case 15:
-            throw new Error('Error occured - ' + _context.t0);
-
-          case 16:
-            _context.next = 18;
+            _context.next = 17;
             return (0, _effects.put)(apiEvent(name, 'END'));
 
-          case 18:
+          case 17:
             return _context.abrupt('return', raw);
 
-          case 19:
+          case 18:
           case 'end':
             return _context.stop();
         }
