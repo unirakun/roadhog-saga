@@ -71,8 +71,8 @@ export default function* () {
 
 This actions are named after your resources, with the previous example these actions are :
  - `API_GET_POSTS_START`
- - `API_GET_POStS_ERROR`
- - `API_GET_POStS_END`
+ - `API_GET_POSTS_ERROR`
+ - `API_GET_POSTS_END`
 
 You can then catch these actions in on of your saga :
 ```es6
