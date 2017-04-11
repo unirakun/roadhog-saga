@@ -86,5 +86,5 @@ yield takeEvery(
   /* stop a loading indicator */
 )
 
-yield takeEvery(action => /API_.*?_ERROR, /* log an error */)
+yield takeEvery(action => /API_.*?_ERROR/, /* log an error */)
 ```
