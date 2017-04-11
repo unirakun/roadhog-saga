@@ -50,7 +50,7 @@ const store = createStore(
 ```
 
 ### 2 - Saga
-In this exemple, we retrieve posts when an action `ACTION` is catched, and then we print these posts.
+In this example, we retrieve posts when an action `ACTION` is catched, and then we print these posts.
 ```es6
 import { call } from 'redux-saga/effects'
 import roadhog from 'roadhog-saga'
