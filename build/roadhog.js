@@ -118,7 +118,7 @@ var addQueryParams = function addQueryParams(url, queryParams) {
 
 exports.default = function (action) {
   return regeneratorRuntime.mark(function _callee(params) {
-    var pathParams, queryParams, url, _action$split, _action$split2, method, name, api, resource, mocks, mock, fallback, raw;
+    var pathParams, queryParams, url, options, _action$split, _action$split2, method, name, api, resource, mocks, mock, fallback, raw;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -127,55 +127,61 @@ exports.default = function (action) {
             pathParams = params && params.pathParams || [];
             queryParams = params && params.queryParams || {};
             url = void 0;
+            options = void 0;
 
             // Check url redux
 
             if (!(typeof action === 'string')) {
-              _context.next = 15;
+              _context.next = 17;
               break;
             }
 
             if (!/.*_.*/.test(action)) {
-              _context.next = 14;
+              _context.next = 16;
               break;
             }
 
             // retrieve resource urls.
             _action$split = action.split(/_(.+)/), _action$split2 = _slicedToArray(_action$split, 2), method = _action$split2[0], name = _action$split2[1];
-            _context.next = 8;
+            _context.next = 9;
             return (0, _effects.select)(apiSelector);
 
-          case 8:
+          case 9:
             api = _context.sent;
+
+
+            // find global options and extends with options of method.
+            options = api[name][method].options || api.options;
+
             resource = api[name][method];
 
             if (typeof resource === 'string') url = resource;
             if ((typeof resource === 'undefined' ? 'undefined' : _typeof(resource)) === 'object') url = resource.url;
-            _context.next = 15;
+            _context.next = 17;
             break;
 
-          case 14:
+          case 16:
             throw new Error('Wrong format for action: \'' + action + '\'. should be \'METHOD_RESOURCES\' (ie: GET_USERS)');
 
-          case 15:
+          case 17:
             if (!((typeof action === 'undefined' ? 'undefined' : _typeof(action)) === 'object')) {
-              _context.next = 21;
+              _context.next = 23;
               break;
             }
 
             if (!action.url) {
-              _context.next = 20;
+              _context.next = 22;
               break;
             }
 
             url = action.url;
-            _context.next = 21;
+            _context.next = 23;
             break;
 
-          case 20:
+          case 22:
             throw new Error("The first argument of roadhog is an object, it should contain a non-empty 'url' property");
 
-          case 21:
+          case 23:
 
             // build url with path params.
             url = addPathParams(url, pathParams);
@@ -183,10 +189,10 @@ exports.default = function (action) {
             url = addQueryParams(url, queryParams);
 
             // Retrieve mock on redux
-            _context.next = 25;
+            _context.next = 27;
             return (0, _effects.select)(mocksSelector);
 
-          case 25:
+          case 27:
             mocks = _context.sent;
 
             // get fallback on redux mocks
@@ -197,20 +203,20 @@ exports.default = function (action) {
 
             // Call tracer : fetch resource and dispatch event error - if necessary -
 
-            _context.next = 30;
+            _context.next = 32;
             return (0, _tracer2.default)(action, function () {
-              return fetch(url);
+              return fetch(url, options);
             }, !fallback)();
 
-          case 30:
+          case 32:
             raw = _context.sent;
-            _context.next = 33;
+            _context.next = 35;
             return raw.ok ? raw.json() : fallback;
 
-          case 33:
+          case 35:
             return _context.abrupt('return', _context.sent);
 
-          case 34:
+          case 36:
           case 'end':
             return _context.stop();
         }

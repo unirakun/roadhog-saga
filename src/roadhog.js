@@ -97,6 +97,7 @@ export default action => function* (params) {
   const queryParams = (params && params.queryParams) || {}
 
   let url
+  let options
 
   // Check url redux
   if (typeof action === 'string') {
@@ -104,6 +105,9 @@ export default action => function* (params) {
       // retrieve resource urls.
       const [method, name] = action.split(/_(.+)/)
       const api = yield select(apiSelector)
+
+      // find global options and extends with options of method.
+      options = api[name][method].options || api.options
 
       const resource = api[name][method]
       if (typeof resource === 'string') url = resource
@@ -136,7 +140,7 @@ export default action => function* (params) {
   const fallback = mock && mock.fallback
 
   // Call tracer : fetch resource and dispatch event error - if necessary -
-  const raw = yield tracer(action, () => fetch(url), !fallback)()
+  const raw = yield tracer(action, () => fetch(url, options), !fallback)()
 
   return yield raw.ok ? raw.json() : fallback
 }
