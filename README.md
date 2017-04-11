@@ -67,9 +67,10 @@ export default function* () {
 `roadhog-saga` triggers some redux actions to help you handle API calls :
  - a `START` action : before a fetch is triggered
  - an `ERROR` action : when the fetch is on error
- - a `END` action : when the fetch is done (on error or not)
+ - an `END` action : when the fetch is finished (on error or not)
 
-This actions are named after your resources, with the previous example these actions are :
+The name of the action is generated from your resources.
+Based on the previous example these actions are :
  - `API_GET_POSTS_START`
  - `API_GET_POSTS_ERROR`
  - `API_GET_POSTS_END`
