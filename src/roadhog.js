@@ -98,6 +98,7 @@ export default action => function* (params) {
 
   let url
   let options
+  let trace = true
 
   // Check url redux
   if (typeof action === 'string') {
@@ -120,6 +121,9 @@ export default action => function* (params) {
 
   // action is an object
   if (typeof action === 'object') {
+    // there is no tracing event when action is an object
+    trace = false
+
     // the property url is mandatory
     if (action.url) {
       url = action.url
@@ -139,8 +143,13 @@ export default action => function* (params) {
   const mock = (mocks || []).find(m => m.match.test(url))
   const fallback = mock && mock.fallback
 
-  // Call tracer : fetch resource and dispatch event error - if necessary -
-  const raw = yield tracer(action, () => fetch(url, options), !fallback)()
+  // fetch cb
+  const f = () => fetch(url, options)
+
+  // get the raw response, from tracer or from fetch
+  let raw
+  if (trace) raw = yield tracer(action, f, !fallback)()
+  else raw = yield f()
 
   return yield raw.ok ? raw.json() : fallback
 }
