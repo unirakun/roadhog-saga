@@ -108,7 +108,8 @@ export default action => function* (params) {
       const api = yield select(apiSelector)
 
       // find global options and extends with options of method.
-      options = api[name][method].options || api.options
+      options = api[name][method].options || {}
+      if (api.options) options = { ...options, ...api.options }
 
       const resource = api[name][method]
       if (typeof resource === 'string') url = resource

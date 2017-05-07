@@ -3,22 +3,59 @@
 
 import roadhog from './roadhog'
 
-jest.mock('./tracer', () => (action, cb) => params => ({ action, cb, params }))
+jest.mock('./tracer', () => (action, cb) => params => ({ action, cb: cb(), params }))
 
 describe('roadhog', () => {
   const oldFetch = global.fetch
 
   let fetch
-  beforeEach(() => {
+  beforeAll(() => {
     fetch = jest.fn(() => ({}))
     global.fetch = fetch
   })
 
-  afterEach(() => {
+  beforeEach(() => {
+    fetch.mockClear()
+    fetch.mockReset()
+  })
+
+  afterAll(() => {
     global.fetch = oldFetch
   })
 
   describe('common (with or without params)', () => {
+    describe('String action [GET_RESOURCE]', () => {
+      it('should get URL from string resource for GET method name, and fetch', () => {
+        const gen = roadhog('GET_RESOURCE')()
+        gen.next() // find API option into redux
+        gen.next({ // mocks - with resource as a string
+          RESOURCE: {
+            GET: 'http://an-url.com',
+          },
+        })
+        gen.next(undefined) // tracer - with undefined mock
+        gen.next({}) // result
+        expect(fetch.mock.calls[0]).toEqual(['http://an-url.com', {}])
+      })
+
+      it('should get URL from object resource for GET method name, and fetch', () => {
+        const gen = roadhog('GET_RESOURCE')()
+        gen.next() // find API option into redux
+        gen.next({ // mocks - with resource as a string
+          options: { other: 'options' },
+          RESOURCE: {
+            GET: {
+              url: 'http://an-url.com',
+              options: { some: 'options' },
+            },
+          },
+        })
+        gen.next(undefined) // tracer - with undefined mock
+        gen.next({}) // result
+        expect(fetch.mock.calls[0]).toEqual(['http://an-url.com', { other: 'options', some: 'options' }])
+      })
+    })
+
     it('should call fetch with an object action', () => {
       const res = { a: 'json' }
 
@@ -48,6 +85,21 @@ describe('roadhog', () => {
   xdescribe('with queryParams')
 
   describe('errors', () => {
+    it('should throw error when action is string without _', () => {
+      const gen = roadhog('GETRESOURCE')()
+
+      let exception = false
+      try {
+        gen.next() // Find API option into redux
+      } catch (ex) {
+        exception = true
+
+        expect(ex.message).toEqual('Wrong format for action: \'GETRESOURCE\'. should be \'METHOD_RESOURCES\' (ie: GET_USERS)')
+      } finally {
+        expect(exception).toBe(true)
+      }
+    })
+
     it('should handle fetch error', () => {
       const gen = roadhog({ url: 'http://an-url.com' })()
       gen.next() // mocks
