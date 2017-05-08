@@ -99,31 +99,31 @@ describe('roadhog', () => {
 
     xdescribe('with pathParams')
     xdescribe('with queryParams')
-  })
 
-  describe('errors', () => {
-    it('should handle fetch error', () => {
-      const gen = roadhog({ url: 'http://an-url.com' })()
-      gen.next() // mocks
-      gen.next(undefined) // fetch - with undefined mock
-      const next = gen.next({ ok: false }) // to json
+    describe('errors', () => {
+      it('should handle fetch error', () => {
+        const gen = roadhog({ url: 'http://an-url.com' })()
+        gen.next() // mocks
+        gen.next(undefined) // fetch - with undefined mock
+        const next = gen.next({ ok: false }) // to json
 
-      expect(next.value).toBe(undefined) // no fallback
-    })
+        expect(next.value).toBe(undefined) // no fallback
+      })
 
-    it('should throw error when action is an object without url', () => {
-      const gen = roadhog({ an: 'object' })()
+      it('should throw error when action is an object without url', () => {
+        const gen = roadhog({ an: 'object' })()
 
-      let exception = false
-      try {
-        gen.next() // throw
-      } catch (ex) {
-        exception = true
+        let exception = false
+        try {
+          gen.next() // throw
+        } catch (ex) {
+          exception = true
 
-        expect(ex.message).toEqual('The first argument of roadhog is an object, it should contain a non-empty \'url\' property')
-      } finally {
-        expect(exception).toBe(true)
-      }
+          expect(ex.message).toEqual('The first argument of roadhog is an object, it should contain a non-empty \'url\' property')
+        } finally {
+          expect(exception).toBe(true)
+        }
+      })
     })
   })
 })
