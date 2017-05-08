@@ -73,15 +73,27 @@ const apiSelector = ({ config: { api } }) => api
 // Reducer config > mocks
 const mocksSelector = ({ config: { mocks } }) => mocks
 
+// Encode params
+const encodeParam = param => encodeURIComponent(param)
+const encodeParams = params => params.map(encodeParam)
+
 // Add all params to path url.
-const addPathParams = (url, pathParams) => (!isEmpty(pathParams) ? `${url}/${pathParams.join('/')}` : url)
+const addPathParams = (url, pathParams) => {
+  if (isEmpty(pathParams)) return url
+  return `${url}/${encodeParams(pathParams).join('/')}`
+}
+
 // Add all params to the query on url.
 const addQueryParams = (url, queryParams) => {
-  if (!isEmpty(queryParams)) {
-    const params = Object.keys(queryParams).map((k => `${k}=${queryParams[k]}`))
-    return `${url}?${params.join('&')}`
-  }
-  return url
+  if (isEmpty(queryParams)) return url
+
+  const params = Object.keys(queryParams)
+    .map((k => `${k}=${encodeParam(queryParams[k])}`))
+
+  const slash = (url.endsWith('/') || url.endsWith('&') || url.endsWith('?')) ? '' : '/'
+  const questionMark = (url.endsWith('&') || url.endsWith('?')) ? '' : '?'
+
+  return `${url}${slash}${questionMark}${params.join('&')}`
 }
 
 /**
@@ -98,6 +110,7 @@ export default action => function* (params) {
 
   let url
   let options
+  let trace = true
 
   // Check url redux
   if (typeof action === 'string') {
@@ -107,7 +120,8 @@ export default action => function* (params) {
       const api = yield select(apiSelector)
 
       // find global options and extends with options of method.
-      options = api[name][method].options || api.options
+      options = api[name][method].options || {}
+      if (api.options) options = { ...options, ...api.options }
 
       const resource = api[name][method]
       if (typeof resource === 'string') url = resource
@@ -120,6 +134,9 @@ export default action => function* (params) {
 
   // action is an object
   if (typeof action === 'object') {
+    // there is no tracing event when action is an object
+    trace = false
+
     // the property url is mandatory
     if (action.url) {
       url = action.url
@@ -139,8 +156,13 @@ export default action => function* (params) {
   const mock = (mocks || []).find(m => m.match.test(url))
   const fallback = mock && mock.fallback
 
-  // Call tracer : fetch resource and dispatch event error - if necessary -
-  const raw = yield tracer(action, () => fetch(url, options), !fallback)()
+  // fetch cb
+  const f = () => fetch(url, options)
+
+  // get the raw response, from tracer or from fetch
+  let raw
+  if (trace) raw = yield tracer(action, f, !fallback)()
+  else raw = yield f()
 
   return yield raw.ok ? raw.json() : fallback
 }

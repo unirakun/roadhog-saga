@@ -40,6 +40,7 @@
     "react-addons-test-utils": "^15.4.2",
     "react-redux": "^5.0.2",
     "redux": "^3.6.0",
+    "redux-saga": "^0.15.1",
     "sinon": "^1.17.7"
   },
   "jest": {
@@ -48,7 +49,10 @@
     },
     "moduleDirectories": [
       "node_modules",
-      "src"
+      "<rootDir>"
+    ],
+    "setupFiles": [
+      "./misc/testSetup.js"
     ]
   },
   "babel": {
