@@ -1,4 +1,5 @@
 # roadhog
+[![CircleCI](https://circleci.com/gh/Trampss/roadhog-saga.svg?&style=shield&circle-token=)](https://circleci.com/gh/Trampss/roadhog-saga/tree/master) [![NPM Version](https://badge.fury.io/js/roadhog-saga.svg)](https://www.npmjs.com/package/roadhog-saga) [![Coverage Status](https://coveralls.io/repos/github/Trampss/roadhog-saga/badge.svg?branch=master)](https://coveralls.io/github/Trampss/roadhog-saga?branch=master)
 
 ## Description
 Library that is connected to redux, use to fetch api, and to dispatch saga event
