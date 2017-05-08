@@ -73,15 +73,27 @@ const apiSelector = ({ config: { api } }) => api
 // Reducer config > mocks
 const mocksSelector = ({ config: { mocks } }) => mocks
 
+// Encode params
+const encodeParam = param => encodeURIComponent(param)
+const encodeParams = params => params.map(encodeParam)
+
 // Add all params to path url.
-const addPathParams = (url, pathParams) => (!isEmpty(pathParams) ? `${url}/${pathParams.join('/')}` : url)
+const addPathParams = (url, pathParams) => {
+  if (isEmpty(pathParams)) return url
+  return `${url}/${encodeParams(pathParams).join('/')}`
+}
+
 // Add all params to the query on url.
 const addQueryParams = (url, queryParams) => {
-  if (!isEmpty(queryParams)) {
-    const params = Object.keys(queryParams).map((k => `${k}=${queryParams[k]}`))
-    return `${url}?${params.join('&')}`
-  }
-  return url
+  if (isEmpty(queryParams)) return url
+
+  const params = Object.keys(queryParams)
+    .map((k => `${k}=${encodeParam(queryParams[k])}`))
+
+  const slash = (url.endsWith('/') || url.endsWith('&') || url.endsWith('?')) ? '' : '/'
+  const questionMark = (url.endsWith('&') || url.endsWith('?')) ? '' : '?'
+
+  return `${url}${slash}${questionMark}${params.join('&')}`
 }
 
 /**

@@ -23,7 +23,7 @@ describe('roadhog', () => {
     global.fetch = oldFetch
   })
 
-  describe('String action [GET_RESOURCE]', () => {
+  describe('string action [GET_RESOURCE]', () => {
     it('should throw error when string is without _', () => {
       const gen = roadhog('GETRESOURCE')()
 
@@ -85,6 +85,28 @@ describe('roadhog', () => {
   })
 
   describe('common', () => {
+    it('should add pathParams', () => {
+      const gen = roadhog({ url: 'http://an-url.com' })({
+        pathParams: ['a path param', '1821', 19],
+      })
+      gen.next() // mocks
+      gen.next(undefined) // fetch - without mocks
+      gen.next({ ok: true, json: () => 'ok' }) // return - fetch ok
+
+      expect(fetch.mock.calls[0]).toEqual(['http://an-url.com/a%20path%20param/1821/19', undefined])
+    })
+
+    it('should add queryParams', () => {
+      const gen = roadhog({ url: 'http://an-url.com' })({
+        queryParams: { a: 'query param', an: 128, next: '1281' },
+      })
+      gen.next() // mocks
+      gen.next(undefined) // fetch - without mocks
+      gen.next({ ok: true, json: () => 'ok' }) // return - fetch ok
+
+      expect(fetch.mock.calls[0]).toEqual(['http://an-url.com/?a=query%20param&an=128&next=1281', undefined])
+    })
+
     it('should fallback to mock', () => {
       const fallback = { a: 'json (mocked)' }
 
@@ -96,9 +118,6 @@ describe('roadhog', () => {
       expect(next.value).toBe(fallback)
       expect(fetch.mock.calls[0]).toEqual(['http://an-url.com', undefined])
     })
-
-    xdescribe('with pathParams')
-    xdescribe('with queryParams')
 
     describe('errors', () => {
       it('should handle fetch error', () => {
