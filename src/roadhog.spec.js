@@ -24,32 +24,44 @@ describe('roadhog', () => {
   })
 
   describe('string action [GET_RESOURCE]', () => {
-    it('should throw error when string is without _', () => {
-      const gen = roadhog('GETRESOURCE')()
-
-      let exception = false
-      try {
-        gen.next() // Find API option into redux
-      } catch (ex) {
-        exception = true
-
-        expect(ex.message).toEqual('Wrong format for action: \'GETRESOURCE\'. should be \'METHOD_RESOURCES\' (ie: GET_USERS)')
-      } finally {
-        expect(exception).toBe(true)
-      }
-    })
-
-    it('should get URL from _string_ resource and fetch', () => {
-      const gen = roadhog('GET_RESOURCE')()
+    it('should add HTTP method based on action name', () => {
+      const gen = roadhog('POST_RESOURCE')()
       gen.next() // find API option into redux
       gen.next({ // mocks - with resource as a string
+        RESOURCE: 'http://an-url.com',
+      })
+      gen.next(undefined) // tracer - with undefined mock
+      gen.next({}) // result
+      expect(fetch.mock.calls[0]).toEqual(['http://an-url.com', { method: 'POST' }])
+    })
+
+    it('should add HTTP method based on object configuration', () => {
+      const gen = roadhog('POST_RESOURCE')() // NAME and OPTION are different
+      gen.next() // find API option into redux
+      gen.next({ // mocks - with resource as an object
         RESOURCE: {
-          GET: 'http://an-url.com',
+          POST: { // NAME and OPTION are different
+            url: 'http://an-url.com',
+            options: {
+              method: 'PUT',
+            },
+          },
         },
       })
       gen.next(undefined) // tracer - with undefined mock
       gen.next({}) // result
-      expect(fetch.mock.calls[0]).toEqual(['http://an-url.com', {}])
+      expect(fetch.mock.calls[0]).toEqual(['http://an-url.com', { method: 'PUT' }])
+    })
+
+    it('should get URL from _string_ method resource and fetch', () => {
+      const gen = roadhog('GET_RESOURCE')()
+      gen.next() // find API option into redux
+      gen.next({ // mocks - with resource as a string
+        RESOURCE: 'http://an-url.com',
+      })
+      gen.next(undefined) // tracer - with undefined mock
+      gen.next({}) // result
+      expect(fetch.mock.calls[0]).toEqual(['http://an-url.com', { method: 'GET' }])
     })
 
     it('should get URL from _object_ resource and fetch', () => {
@@ -66,7 +78,7 @@ describe('roadhog', () => {
       })
       gen.next(undefined) // tracer - with undefined mock
       gen.next({}) // result
-      expect(fetch.mock.calls[0]).toEqual(['http://an-url.com', { other: 'options', some: 'options' }])
+      expect(fetch.mock.calls[0]).toEqual(['http://an-url.com', { method: 'GET', other: 'options', some: 'options' }])
     })
   })
 
@@ -120,6 +132,21 @@ describe('roadhog', () => {
     })
 
     describe('errors', () => {
+      it('should throw error when string is without _', () => {
+        const gen = roadhog('GETRESOURCE')()
+
+        let exception = false
+        try {
+          gen.next() // Find API option into redux
+        } catch (ex) {
+          exception = true
+
+          expect(ex.message).toEqual('Wrong format for action: \'GETRESOURCE\'. should be \'METHOD_RESOURCES\' (ie: GET_USERS)')
+        } finally {
+          expect(exception).toBe(true)
+        }
+      })
+
       it('should handle fetch error', () => {
         const gen = roadhog({ url: 'http://an-url.com' })()
         gen.next() // mocks

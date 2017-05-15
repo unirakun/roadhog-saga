@@ -1,6 +1,6 @@
 {
   "name": "roadhog-saga",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Library that is connected to redux, use to fetch api, and to dispatch saga event",
   "license": "MIT",
   "main": "build/index.js",
