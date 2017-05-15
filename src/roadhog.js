@@ -128,7 +128,7 @@ export default action => function* (params) {
 
       const resource = api[name][method]
       if (resource === undefined) url = api[name]
-      if (typeof resource === 'string') url = resource
+      else if (typeof resource === 'string') url = resource
       else if (typeof resource === 'object') url = resource.url
     } else {
       // throw Exception if action key is malformed.
