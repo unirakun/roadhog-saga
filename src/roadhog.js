@@ -129,7 +129,7 @@ export default action => function* (params) {
       const resource = api[name][method]
       if (resource === undefined) url = api[name]
       else if (typeof resource === 'string') url = resource
-      else if (typeof resource === 'object') url = resource.url
+      else url = resource.url
     } else {
       // throw Exception if action key is malformed.
       throw new Error(`Wrong format for action: '${action}'. should be 'METHOD_RESOURCES' (ie: GET_USERS)`)
@@ -157,7 +157,14 @@ export default action => function* (params) {
   // Retrieve mock on redux
   const mocks = yield select(mocksSelector)
   // get fallback on redux mocks
-  const mock = (mocks || []).find(m => m.match.test(url))
+  const mock = (mocks || []).find((m) => {
+    // url matches
+    if (m.match.test(url)) {
+      return m.method === undefined || m.method === options.method
+    }
+
+    return false // url doesn't match
+  })
   const fallback = mock && mock.fallback
 
   // fetch cb

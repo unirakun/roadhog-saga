@@ -148,12 +148,12 @@ exports.default = function (action) {
             // Check url redux
 
             if (!(typeof action === 'string')) {
-              _context.next = 18;
+              _context.next = 17;
               break;
             }
 
             if (!/.*_.*/.test(action)) {
-              _context.next = 17;
+              _context.next = 16;
               break;
             }
 
@@ -173,17 +173,16 @@ exports.default = function (action) {
 
             resource = api[name][method];
 
-            if (resource === undefined) url = api[name];
-            if (typeof resource === 'string') url = resource;else if ((typeof resource === 'undefined' ? 'undefined' : _typeof(resource)) === 'object') url = resource.url;
-            _context.next = 18;
+            if (resource === undefined) url = api[name];else if (typeof resource === 'string') url = resource;else url = resource.url;
+            _context.next = 17;
             break;
 
-          case 17:
+          case 16:
             throw new Error('Wrong format for action: \'' + action + '\'. should be \'METHOD_RESOURCES\' (ie: GET_USERS)');
 
-          case 18:
+          case 17:
             if (!((typeof action === 'undefined' ? 'undefined' : _typeof(action)) === 'object')) {
-              _context.next = 25;
+              _context.next = 24;
               break;
             }
 
@@ -193,18 +192,18 @@ exports.default = function (action) {
             // the property url is mandatory
 
             if (!action.url) {
-              _context.next = 24;
+              _context.next = 23;
               break;
             }
 
             url = action.url;
-            _context.next = 25;
+            _context.next = 24;
             break;
 
-          case 24:
+          case 23:
             throw new Error("The first argument of roadhog is an object, it should contain a non-empty 'url' property");
 
-          case 25:
+          case 24:
 
             // build url with path params.
             url = addPathParams(url, pathParams);
@@ -212,15 +211,20 @@ exports.default = function (action) {
             url = addQueryParams(url, queryParams);
 
             // Retrieve mock on redux
-            _context.next = 29;
+            _context.next = 28;
             return (0, _effects.select)(mocksSelector);
 
-          case 29:
+          case 28:
             mocks = _context.sent;
 
             // get fallback on redux mocks
             mock = (mocks || []).find(function (m) {
-              return m.match.test(url);
+              // url matches
+              if (m.match.test(url)) {
+                return m.method === undefined || m.method === options.method;
+              }
+
+              return false; // url doesn't match
             });
             fallback = mock && mock.fallback;
 
@@ -236,33 +240,33 @@ exports.default = function (action) {
             raw = void 0;
 
             if (!trace) {
-              _context.next = 40;
+              _context.next = 39;
               break;
             }
 
-            _context.next = 37;
+            _context.next = 36;
             return (0, _tracer2.default)(action, f, !fallback)();
 
-          case 37:
+          case 36:
             raw = _context.sent;
-            _context.next = 43;
+            _context.next = 42;
             break;
 
-          case 40:
-            _context.next = 42;
+          case 39:
+            _context.next = 41;
             return f();
 
-          case 42:
+          case 41:
             raw = _context.sent;
 
-          case 43:
-            _context.next = 45;
+          case 42:
+            _context.next = 44;
             return raw.ok ? raw.json() : fallback;
 
-          case 45:
+          case 44:
             return _context.abrupt('return', _context.sent);
 
-          case 46:
+          case 45:
           case 'end':
             return _context.stop();
         }
