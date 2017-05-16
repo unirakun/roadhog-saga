@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; /*
@@ -92,19 +94,32 @@ var mocksSelector = function mocksSelector(_ref2) {
   return mocks;
 };
 
+// Encode params
+var encodeParam = function encodeParam(param) {
+  return encodeURIComponent(param);
+};
+var encodeParams = function encodeParams(params) {
+  return params.map(encodeParam);
+};
+
 // Add all params to path url.
 var addPathParams = function addPathParams(url, pathParams) {
-  return !isEmpty(pathParams) ? url + '/' + pathParams.join('/') : url;
+  if (isEmpty(pathParams)) return url;
+  return url + '/' + encodeParams(pathParams).join('/');
 };
+
 // Add all params to the query on url.
 var addQueryParams = function addQueryParams(url, queryParams) {
-  if (!isEmpty(queryParams)) {
-    var params = Object.keys(queryParams).map(function (k) {
-      return k + '=' + queryParams[k];
-    });
-    return url + '?' + params.join('&');
-  }
-  return url;
+  if (isEmpty(queryParams)) return url;
+
+  var params = Object.keys(queryParams).map(function (k) {
+    return k + '=' + encodeParam(queryParams[k]);
+  });
+
+  var slash = url.endsWith('/') || url.endsWith('&') || url.endsWith('?') ? '' : '/';
+  var questionMark = url.endsWith('&') || url.endsWith('?') ? '' : '?';
+
+  return '' + url + slash + questionMark + params.join('&');
 };
 
 /**
@@ -118,7 +133,7 @@ var addQueryParams = function addQueryParams(url, queryParams) {
 
 exports.default = function (action) {
   return regeneratorRuntime.mark(function _callee(params) {
-    var pathParams, queryParams, url, options, _action$split, _action$split2, method, name, api, resource, mocks, mock, fallback, raw;
+    var pathParams, queryParams, url, options, trace, _action$split, _action$split2, method, name, api, resource, mocks, mock, fallback, f, raw;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -128,60 +143,68 @@ exports.default = function (action) {
             queryParams = params && params.queryParams || {};
             url = void 0;
             options = void 0;
+            trace = true;
 
             // Check url redux
 
             if (!(typeof action === 'string')) {
-              _context.next = 17;
+              _context.next = 18;
               break;
             }
 
             if (!/.*_.*/.test(action)) {
-              _context.next = 16;
+              _context.next = 17;
               break;
             }
 
             // retrieve resource urls.
             _action$split = action.split(/_(.+)/), _action$split2 = _slicedToArray(_action$split, 2), method = _action$split2[0], name = _action$split2[1];
-            _context.next = 9;
+            _context.next = 10;
             return (0, _effects.select)(apiSelector);
 
-          case 9:
+          case 10:
             api = _context.sent;
 
 
-            // find global options and extends with options of method.
-            options = api[name][method].options || api.options;
+            // options
+            options = _extends({
+              method: method
+            }, api[name][method] && api[name][method].options || {}, api.options || {});
 
             resource = api[name][method];
 
-            if (typeof resource === 'string') url = resource;
-            if ((typeof resource === 'undefined' ? 'undefined' : _typeof(resource)) === 'object') url = resource.url;
-            _context.next = 17;
+            if (resource === undefined) url = api[name];
+            if (typeof resource === 'string') url = resource;else if ((typeof resource === 'undefined' ? 'undefined' : _typeof(resource)) === 'object') url = resource.url;
+            _context.next = 18;
             break;
 
-          case 16:
+          case 17:
             throw new Error('Wrong format for action: \'' + action + '\'. should be \'METHOD_RESOURCES\' (ie: GET_USERS)');
 
-          case 17:
+          case 18:
             if (!((typeof action === 'undefined' ? 'undefined' : _typeof(action)) === 'object')) {
-              _context.next = 23;
+              _context.next = 25;
               break;
             }
 
+            // there is no tracing event when action is an object
+            trace = false;
+
+            // the property url is mandatory
+
             if (!action.url) {
-              _context.next = 22;
+              _context.next = 24;
               break;
             }
 
             url = action.url;
-            _context.next = 23;
+            _context.next = 25;
             break;
 
-          case 22:
+          case 24:
             throw new Error("The first argument of roadhog is an object, it should contain a non-empty 'url' property");
 
-          case 23:
+          case 25:
 
             // build url with path params.
             url = addPathParams(url, pathParams);
@@ -189,10 +212,10 @@ exports.default = function (action) {
             url = addQueryParams(url, queryParams);
 
             // Retrieve mock on redux
-            _context.next = 27;
+            _context.next = 29;
             return (0, _effects.select)(mocksSelector);
 
-          case 27:
+          case 29:
             mocks = _context.sent;
 
             // get fallback on redux mocks
@@ -201,22 +224,45 @@ exports.default = function (action) {
             });
             fallback = mock && mock.fallback;
 
-            // Call tracer : fetch resource and dispatch event error - if necessary -
+            // fetch cb
 
-            _context.next = 32;
-            return (0, _tracer2.default)(action, function () {
+            f = function f() {
               return fetch(url, options);
-            }, !fallback)();
+            };
 
-          case 32:
+            // get the raw response, from tracer or from fetch
+
+
+            raw = void 0;
+
+            if (!trace) {
+              _context.next = 40;
+              break;
+            }
+
+            _context.next = 37;
+            return (0, _tracer2.default)(action, f, !fallback)();
+
+          case 37:
             raw = _context.sent;
-            _context.next = 35;
+            _context.next = 43;
+            break;
+
+          case 40:
+            _context.next = 42;
+            return f();
+
+          case 42:
+            raw = _context.sent;
+
+          case 43:
+            _context.next = 45;
             return raw.ok ? raw.json() : fallback;
 
-          case 35:
+          case 45:
             return _context.abrupt('return', _context.sent);
 
-          case 36:
+          case 46:
           case 'end':
             return _context.stop();
         }

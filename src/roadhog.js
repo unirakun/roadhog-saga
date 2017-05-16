@@ -119,13 +119,17 @@ export default action => function* (params) {
       const [method, name] = action.split(/_(.+)/)
       const api = yield select(apiSelector)
 
-      // find global options and extends with options of method.
-      options = api[name][method].options || {}
-      if (api.options) options = { ...options, ...api.options }
+      // options
+      options = {
+        method,
+        ...((api[name][method] && api[name][method].options) || {}),
+        ...(api.options || {}),
+      }
 
       const resource = api[name][method]
-      if (typeof resource === 'string') url = resource
-      if (typeof resource === 'object') url = resource.url
+      if (resource === undefined) url = api[name]
+      else if (typeof resource === 'string') url = resource
+      else if (typeof resource === 'object') url = resource.url
     } else {
       // throw Exception if action key is malformed.
       throw new Error(`Wrong format for action: '${action}'. should be 'METHOD_RESOURCES' (ie: GET_USERS)`)
