@@ -24,6 +24,23 @@ describe('roadhog', () => {
   })
 
   describe('string action [GET_RESOURCE]', () => {
+    it('should retrieve mock based on HTTP method', () => {
+      const fallback = { a: 'mock' }
+      const fallbackPost = { post: 'mock' }
+      const gen = roadhog('POST_RESOURCE')()
+      gen.next() // find API option into redux
+      gen.next({ // mock - resource as a string
+        RESOURCE: 'http://an-url.com',
+      })
+      gen.next([ // tracer - with mocks
+        { match: /no-match/ },
+        { match: /.*an-url.com.*/, method: 'GET', fallback },
+        { match: /.*an-url.com.*/, method: 'POST', fallback: fallbackPost },
+      ])
+      const next = gen.next({ ok: false }) // to json
+      expect(next.value).toBe(fallbackPost)
+    })
+
     it('should add HTTP method based on action name', () => {
       const gen = roadhog('POST_RESOURCE')()
       gen.next() // find API option into redux
