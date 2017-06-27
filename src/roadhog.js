@@ -26,5 +26,6 @@ export default action => function* (inputs) {
   const raw = yield tracer(action, () => fetch(url, options), !fallback)()
 
   // return json response or fallback
-  return yield raw.ok ? raw.json() : fallback
+  if (raw.ok) return yield raw.json()
+  return fallback
 }

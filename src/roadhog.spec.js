@@ -16,7 +16,7 @@ describe('roadhog', () => {
   const test = tester(roadhog('GET_TODOS'))(/* no inputs */)
 
   it('should return API returns (ok case)', () => {
-    tracer.mockImplementation(() => () => () => ({ ok: true, json: () => ({ some: 'value' }) }))
+    tracer.mockImplementation(() => () => ({ ok: true, json: () => ({ some: 'value' }) }))
 
     expect(
       test({
@@ -26,7 +26,7 @@ describe('roadhog', () => {
   })
 
   it('should return fallback (ko case)', () => {
-    tracer.mockImplementation(() => () => () => ({ ok: false }))
+    tracer.mockImplementation(() => () => ({ ok: false }))
 
     expect(
       test({

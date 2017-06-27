@@ -24,15 +24,22 @@ Array [
   },
   Object {
     "done": false,
-    "value": [Function],
+    "value": Object {
+      "json": [Function],
+      "ok": true,
+    },
   },
   Object {
     "done": false,
-    "value": "fallback",
+    "value": Object {
+      "some": "value",
+    },
   },
   Object {
     "done": true,
-    "value": "fallback",
+    "value": Object {
+      "some": "value",
+    },
   },
 ]
 `;
@@ -63,11 +70,9 @@ Array [
   },
   Object {
     "done": false,
-    "value": [Function],
-  },
-  Object {
-    "done": false,
-    "value": "fallback",
+    "value": Object {
+      "ok": false,
+    },
   },
   Object {
     "done": true,
