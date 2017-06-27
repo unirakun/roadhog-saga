@@ -1,8 +1,6 @@
 export const encodeParams = (params) => {
-  let toEncode = params
-  if (!Array.isArray(params)) toEncode = [params]
-
-  return toEncode.map(param => encodeURIComponent(param))
+  if (!Array.isArray(params)) return encodeURIComponent(params)
+  return params.map(param => encodeURIComponent(param))
 }
 
 export const isEmpty = (o) => {
