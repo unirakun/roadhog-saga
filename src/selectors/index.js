@@ -3,11 +3,7 @@ export const getAPI = state => getConfig(state).api
 export const getMocks = state => getConfig(state).mocks
 export const getResource = name => state => getAPI(state)[name]
 
-export const getMethod = name => methodName => (state) => {
-  const resource = getResource(name)(state)
-  if (!resource) return {}
-  return resource[methodName]
-}
+export const getMethod = name => methodName => state => getResource(name)(state)[methodName]
 
 export const getOptions = name => methodName => (state) => {
   // raw data
