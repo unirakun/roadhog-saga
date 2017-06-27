@@ -2,7 +2,7 @@ import { select } from 'redux-saga/effects'
 import { getOptions, getURL } from '../selectors'
 import { addPathParams, addQueryParams } from '../url-pattern'
 
-export default action => function* (inputs) {
+export default action => function* (inputs = {}) {
   // action pattern is `<METHOD_NAME>_<RESOURCE_NAME>`
   const [methodName, name] = action.split(/_(.+)/)
 

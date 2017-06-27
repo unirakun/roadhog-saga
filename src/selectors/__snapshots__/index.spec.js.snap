@@ -1,0 +1,29 @@
+exports[`selectors getAPI should get api config 1`] = `
+Object {
+  "some": "api config",
+}
+`;
+
+exports[`selectors getConfig should get config 1`] = `
+Object {
+  "some": "config",
+}
+`;
+
+exports[`selectors getMethod should get method 1`] = `
+Object {
+  "some": "method info",
+}
+`;
+
+exports[`selectors getMocks should get mocks 1`] = `
+Object {
+  "some": "mock config",
+}
+`;
+
+exports[`selectors getResource should get resource 1`] = `
+Object {
+  "some": "resource info",
+}
+`;
