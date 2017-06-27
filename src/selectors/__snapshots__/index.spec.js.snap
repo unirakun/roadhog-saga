@@ -1,0 +1,58 @@
+exports[`selectors getAPI should get api config 1`] = `
+Object {
+  "some": "api config",
+}
+`;
+
+exports[`selectors getConfig should get config 1`] = `
+Object {
+  "some": "config",
+}
+`;
+
+exports[`selectors getFallback should get mock based on URL only --fallback1-- 1`] = `"fallback 1"`;
+
+exports[`selectors getFallback should get mock based on method --fallback4-- 1`] = `"fallback 4"`;
+
+exports[`selectors getFallback should return undefined when no mock 1`] = `undefined`;
+
+exports[`selectors getFallback should return undefined when no mock found 1`] = `undefined`;
+
+exports[`selectors getMethod should get method 1`] = `
+Object {
+  "some": "method info",
+}
+`;
+
+exports[`selectors getMocks should get mocks 1`] = `
+Object {
+  "some": "mock config",
+}
+`;
+
+exports[`selectors getOptions should get options -maxi- 1`] = `
+Object {
+  "apiKey": "api options",
+  "method": "GET",
+  "methodKey": "method options",
+  "resourceKey": "resources options",
+}
+`;
+
+exports[`selectors getOptions should get options -mini- 1`] = `
+Object {
+  "method": "GET",
+}
+`;
+
+exports[`selectors getResource should get resource 1`] = `
+Object {
+  "some": "resource info",
+}
+`;
+
+exports[`selectors getURL should get URL from method -object- 1`] = `"http://an-url.com"`;
+
+exports[`selectors getURL should get URL from method -string- 1`] = `"http://an-url.com"`;
+
+exports[`selectors getURL should get URL from resource 1`] = `"http://an-url.com"`;

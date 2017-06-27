@@ -1,0 +1,18 @@
+exports[`utils encodeParams should encode params (array params) 1`] = `
+Array [
+  "a%20param",
+  "an%20other%20%3A)",
+]
+`;
+
+exports[`utils encodeParams should encode params (one param) 1`] = `"a%20param"`;
+
+exports[`utils isEmpty array should be empty 1`] = `true`;
+
+exports[`utils isEmpty array should not be empty 1`] = `false`;
+
+exports[`utils isEmpty object should be empty 1`] = `true`;
+
+exports[`utils isEmpty object should not be empty 1`] = `false`;
+
+exports[`utils isEmpty should be empty when undefined 1`] = `true`;

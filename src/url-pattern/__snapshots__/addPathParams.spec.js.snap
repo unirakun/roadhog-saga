@@ -1,0 +1,5 @@
+exports[`addPathParams should return url with path params (no trailing /) 1`] = `"http://an-url/some/param"`;
+
+exports[`addPathParams should return url with path params (trailing /) 1`] = `"http://an-url/some/param"`;
+
+exports[`addPathParams should return url without modification 1`] = `"http://an-url"`;

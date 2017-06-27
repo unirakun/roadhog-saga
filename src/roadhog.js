@@ -1,179 +1,31 @@
-/*
-                          .
-                          ..   `.
-                         `..  ...
-                         ... ...`
-                        .........
-                       ..........
-                      ............
-                     .............
-                     ...............
-                    `..............
-                    ..............`
-                    `.............
-                 ................
-                  ...............
-                  .............`
-                   .....;;;;;;
-                       :;;;;;;
-                       :,,,,:;`
-                   `............
-                  ................
-                ...................
-               ........:::::,.......`
-              .....,;;;;;;;;;;;;.....`
-             ....:;;;;;;;;;;;;;;;;....
-             ...;;;;;;;;;;;;;;;;;;;;...
-            ..,;;;;;;;;;;;;;;;;;;;;;;...
-           `..;;;;;;;;;;;;;;;;;;;;;;;;..
-           ..;;;;;;;;;;;;;;;;;;;;;;;;;;..
-           .;;;;;;;;;;;;;;;;;;;;;;;;;;;,.
-          `.;;   .;;;;;;;;;;;;;;;;   .;;.
-          .:; ..  ;;;;;;   .;;;;;`  .` ;.`
-          .;`...` :;;;, .;;  ;;;;  .... ;`
-          . ..... :;;``;;;;;; :;;  .....:`
-          :...... :;.:;;;;;;;;`;;` .....``
-          `..... `;,;;;;;;;;;;;; ;  .....,
-         ,`....` ; ;;;;;;;;;;;;;;,: .....`
-         ;`.... :,;;;;;;;;;;;;;;;:;` ....`.
-         ;``.  :;:;;;;;;;;;;;;;;;;`;` `.`::
-         ;;   ;;.;;;;;;;;;;;;;;;;;;;;,  `;;
-        ,;;;;;;;;;;;;,:;;;;;;.;;;;;;;;;;;;;
-        ;;;;;;;;;;;;`  ;;;;;`  ;;;;;;;;;;;;,
-        ;;;;;;;;;;;; ;;:;;;;`;; ;;;;;;;;;;;;
-       `;;;;;;;;;;;,;;;;;;;;;;;:;;;;;;;;;;;;
-       `;;;;;;;;;;;:;;;;;;;;;;;;;;;;;;;;;;;;
-       :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,
-    ,;;;;;:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- `:;;;;;;;;.;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;:,
-.::::;;;;;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;.;;;;;;;::::
-,::::;;;;;;;;:;;;;;;;;;;;;;;;;;;;;;;;; ;;;;;;;:::::
-.:::::;;;;;;; ;;;;;;;;;;;;;;;;;;;;;;;::;;;;;;::::;:
-`:;::::;;;;;;;`;;;;;;;;;;;;;;;;;;;;;; ;;;;;;;::::::
- ::;;:::;;;;;;; ;;;;;;;;;;;;;;;;;;;; ;;;;;;;:::;;:,
- ,::;::::;;;;;; ;;;;;;;;;;;;;;;;;;;::;;;;;;::::;::
-  ::;;:::;;;;;;,;;;;;;;;;;;;;;;;;;;`;;;;;;::::;;:,
-  `::;::::;;;;;;:;;;;;;;;;;;;;;;;;; ;;;;;;:::;;::
-   ,:;;:::;;;;;; ;;;;;;;;;;;;;;;;;; ;;;;;;:::;::
-    ::::::;;;;.   .;;;;;;;;;;;;;;    :;;;::::::,
-     :::::;;`        ,;;;;;;;;.        ,;:::::`
-      .::,                               .:::
-*/
 import { select } from 'redux-saga/effects'
 import tracer from './tracer'
-
-const isEmpty = (o) => {
-  return !o ||
-    ((typeof o === 'object' && Object.keys(o).length === 0) ||
-    (Array.isArray(o) && o.length === 0))
-}
-
-// Reducer config > api is mandatory.
-const apiSelector = ({ config: { api } }) => api
-// Reducer config > mocks
-const mocksSelector = ({ config: { mocks } }) => mocks
-
-// Encode params
-const encodeParam = param => encodeURIComponent(param)
-const encodeParams = params => params.map(encodeParam)
-
-// Add all params to path url.
-const addPathParams = (url, pathParams) => {
-  if (isEmpty(pathParams)) return url
-  return `${url}/${encodeParams(pathParams).join('/')}`
-}
-
-// Add all params to the query on url.
-const addQueryParams = (url, queryParams) => {
-  if (isEmpty(queryParams)) return url
-
-  const params = Object.keys(queryParams)
-    .map((k => `${k}=${encodeParam(queryParams[k])}`))
-
-  const slash = (url.endsWith('/') || url.endsWith('&') || url.endsWith('?')) ? '' : '/'
-  const questionMark = (url.endsWith('&') || url.endsWith('?')) ? '' : '?'
-
-  return `${url}${slash}${questionMark}${params.join('&')}`
-}
+import { isAction } from './checkers'
+import { mapToFetch } from './mappers'
+import { getFallback } from './selectors'
 
 /**
  * Library that is connected to redux, use to fetch api, and to dispatch saga event
- * @param {string|object} action -
- *   the template of action is like this 'METHOD_RESOURCES' => GET_USERS
- * @param {object} params -
- *   object contains query and path params => {queryParams: {id: 1}, pathParams: [user, 132]}
+ * @param {string} action -
+ *   the template of action is like this '<METHOD_NAME>_<RESOURCE_NAME>' => GET_USERS
+ * @param {object} inputs -
+ *   object contains body, query and path params => {body, query: {id: 1}, path: [user, 132]}
  * @return {object} - api response or fallback define on redux.
  */
-export default action => function* (params) {
-  const pathParams = (params && params.pathParams) || []
-  const queryParams = (params && params.queryParams) || {}
+export default action => function* (inputs) {
+  // check action pattern and eventually throw errors
+  isAction(action)
 
-  let url
-  let options
-  let trace = true
+  // get fetch options to make a fetch callback
+  const [url, options] = yield mapToFetch(action)(inputs)
 
-  // Check url redux
-  if (typeof action === 'string') {
-    if (/.*_.*/.test(action)) {
-      // retrieve resource urls.
-      const [method, name] = action.split(/_(.+)/)
-      const api = yield select(apiSelector)
-
-      // options
-      options = {
-        method,
-        ...((api[name][method] && api[name][method].options) || {}),
-        ...(api.options || {}),
-      }
-
-      const resource = api[name][method]
-      if (resource === undefined) url = api[name]
-      else if (typeof resource === 'string') url = resource
-      else url = resource.url
-    } else {
-      // throw Exception if action key is malformed.
-      throw new Error(`Wrong format for action: '${action}'. should be 'METHOD_RESOURCES' (ie: GET_USERS)`)
-    }
-  }
-
-  // action is an object
-  if (typeof action === 'object') {
-    // there is no tracing event when action is an object
-    trace = false
-
-    // the property url is mandatory
-    if (action.url) {
-      url = action.url
-    } else {
-      throw new Error("The first argument of roadhog is an object, it should contain a non-empty 'url' property")
-    }
-  }
-
-  // build url with path params.
-  url = addPathParams(url, pathParams)
-  // build url with query params.
-  url = addQueryParams(url, queryParams)
-
-  // Retrieve mock on redux
-  const mocks = yield select(mocksSelector)
-  // get fallback on redux mocks
-  const mock = (mocks || []).find((m) => {
-    // url matches
-    if (m.match.test(url)) {
-      return m.method === undefined || m.method === options.method
-    }
-
-    return false // url doesn't match
-  })
-  const fallback = mock && mock.fallback
-
-  // fetch cb
-  const f = () => fetch(url, options)
+  // get the fallback (5XX errors)
+  const fallback = yield select(getFallback(url)(options.method))
 
   // get the raw response, from tracer or from fetch
-  let raw
-  if (trace) raw = yield tracer(action, f, !fallback)()
-  else raw = yield f()
+  const raw = yield tracer(action, () => fetch(url, options), !fallback)()
 
-  return yield raw.ok ? raw.json() : fallback
+  // return json response or fallback
+  if (raw.ok) return yield raw.json()
+  return fallback
 }
