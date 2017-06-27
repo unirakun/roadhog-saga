@@ -1,8 +1,10 @@
-# roadhog
-[![CircleCI](https://circleci.com/gh/Trampss/roadhog-saga.svg?&style=shield&circle-token=)](https://circleci.com/gh/Trampss/roadhog-saga/tree/master) [![NPM Version](https://badge.fury.io/js/roadhog-saga.svg)](https://www.npmjs.com/package/roadhog-saga) [![Coverage Status](https://coveralls.io/repos/github/Trampss/roadhog-saga/badge.svg?branch=master)](https://coveralls.io/github/Trampss/roadhog-saga?branch=master)
+# roadhog-saga
+Easy API fetching with configuration stored into Redux.
 
-## Description
-Library that is connected to redux, use to fetch api, and to dispatch saga event
+> Fetch your API easily with Redux and `redux-saga` !
+
+[![CircleCI](https://circleci.com/gh/Trampss/roadhog-saga.svg?&style=shield&circle-token=)](https://circleci.com/gh/Trampss/roadhog-saga/tree/master) [![NPM Version](https://badge.fury.io/js/roadhog-saga.svg)](https://www.npmjs.com/package/roadhog-saga) [![Coverage Status](https://coveralls.io/repos/github/Trampss/roadhog-saga/badge.svg?branch=master)](https://coveralls.io/github/Trampss/roadhog-saga?branch=master) [![Size](http://img.badgesize.io/Trampss/roadhog-saga/master/index.js.svg)]()
+
 
 ## Installation
 ```
