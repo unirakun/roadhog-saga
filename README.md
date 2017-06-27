@@ -60,7 +60,7 @@ import roadhog from 'roadhog-saga'
 
 export default function* () {
   yield takeLatest('ACTION', function* () {
-    const posts = call(roadhog('GET_POSTS'))
+    const posts = yield call(roadhog('GET_POSTS'))
     console.log(posts)
   }
 }
