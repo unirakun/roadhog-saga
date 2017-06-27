@@ -41,11 +41,11 @@ export const getFallback = url => methodName => (state) => {
   // mock by priority
   const orderedMocks = [
     // same method first
-    ...(mocks.filter(m => m.method === methodName) || []),
+    ...mocks.filter(m => m.method === methodName),
     // no method then
-    ...(mocks.filter(m => m.method === undefined) || []),
+    ...mocks.filter(m => m.method === undefined),
     // other method last
-    ...(mocks.filter(m => m.method !== methodName && m.method !== undefined) || []),
+    ...mocks.filter(m => m.method !== methodName && m.method !== undefined),
   ]
 
   // looking for right mock
