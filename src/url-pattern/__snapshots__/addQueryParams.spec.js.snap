@@ -1,0 +1,9 @@
+exports[`addQueryParams should return url with params (no trailing) 1`] = `"http://an-url/?some=queries&to=add"`;
+
+exports[`addQueryParams should return url with params (trailing &) 1`] = `"http://an-url/?bla=yo&some=queries&to=add"`;
+
+exports[`addQueryParams should return url with params (trailing /) 1`] = `"http://an-url/?some=queries&to=add"`;
+
+exports[`addQueryParams should return url with params (trailing ?) 1`] = `"http://an-url/?some=queries&to=add"`;
+
+exports[`addQueryParams should return url without modification 1`] = `"http://an-url"`;
