@@ -1,1 +1,1 @@
-export { default } from './roadhog.js'
+export { default } from './roadhog'

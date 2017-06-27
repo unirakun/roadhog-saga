@@ -1,0 +1,5 @@
+exports[`isAction should throw an error 1`] = `[Error: Wrong format for action: 'simple-string'. should be '<METHOD_NAME>_<RESOURCE_NAME>' (ie: GET_USERS)]`;
+
+exports[`isAction should throw an error 2`] = `[Error: Wrong format for action: 'undefined'. should be '<METHOD_NAME>_<RESOURCE_NAME>' (ie: GET_USERS)]`;
+
+exports[`isAction should throw an error 3`] = `[Error: Wrong format for action: 'null'. should be '<METHOD_NAME>_<RESOURCE_NAME>' (ie: GET_USERS)]`;
