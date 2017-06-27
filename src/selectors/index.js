@@ -16,7 +16,8 @@ export const getOptions = name => methodName => (state) => {
   const method = getMethod(name)(methodName)(state)
 
   // order is general -> specific
-  let options = { method: methodName, ...api.options }
+  let options = { method: methodName }
+  if (api.options) options = { ...options, ...api.options }
   if (resource.options) options = { ...options, ...resource.options }
   if (method.options) options = { ...options, ...method.options }
 
@@ -37,14 +38,19 @@ export const getFallback = url => methodName => (state) => {
   const mocks = getMocks(state)
   if (!mocks) return undefined
 
-  const mock = mocks.find((m) => {
-    // url matches
-    if (m.match.test(url)) {
-      return m.method === undefined || m.method === methodName
-    }
+  // mock by priority
+  const orderedMocks = [
+    // same method first
+    ...(mocks.filter(m => m.method === methodName) || []),
+    // no method then
+    ...(mocks.filter(m => m.method === undefined) || []),
+    // other method last
+    ...(mocks.filter(m => m.method !== methodName && m.method !== undefined) || []),
+  ]
 
-    return false // url doesn't match
-  })
+  // looking for right mock
+  const mock = orderedMocks.find(m => m.match.test(url))
 
-  return mock.fallback
+  // returns fallback
+  return (mock || {}).fallback
 }
