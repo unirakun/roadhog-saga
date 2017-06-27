@@ -1,0 +1,77 @@
+exports[`roadhog should return API returns (ok case) 1`] = `
+Array [
+  Object {
+    "done": false,
+    "value": Array [
+      "http://an-url",
+      Object {
+        "some": "options",
+      },
+    ],
+  },
+  Object {
+    "raw": Object {
+      "done": false,
+      "value": Object {
+        "@@redux-saga/IO": true,
+        "SELECT": Object {
+          "args": Array [],
+          "selector": [Function],
+        },
+      },
+    },
+    "value": "fallback",
+  },
+  Object {
+    "done": false,
+    "value": [Function],
+  },
+  Object {
+    "done": false,
+    "value": "fallback",
+  },
+  Object {
+    "done": true,
+    "value": "fallback",
+  },
+]
+`;
+
+exports[`roadhog should return fallback (ko case) 1`] = `
+Array [
+  Object {
+    "done": false,
+    "value": Array [
+      "http://an-url",
+      Object {
+        "some": "options",
+      },
+    ],
+  },
+  Object {
+    "raw": Object {
+      "done": false,
+      "value": Object {
+        "@@redux-saga/IO": true,
+        "SELECT": Object {
+          "args": Array [],
+          "selector": [Function],
+        },
+      },
+    },
+    "value": "fallback",
+  },
+  Object {
+    "done": false,
+    "value": [Function],
+  },
+  Object {
+    "done": false,
+    "value": "fallback",
+  },
+  Object {
+    "done": true,
+    "value": "fallback",
+  },
+]
+`;
