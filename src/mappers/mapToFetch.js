@@ -13,11 +13,8 @@ export default action => function* (inputs = {}) {
   // - body is an object : use JSON.stringify
   // - body is a string : let it that way
   const { body } = inputs
-  if (typeof inputs.body === 'string') {
-    options = { ...options, body }
-  } else {
-    options = { ...options, body: JSON.stringify(body) }
-  }
+  if (typeof body === 'string') options = { ...options, body }
+  else options = { ...options, body: JSON.stringify(body) }
 
   // create a fetch url
   let url = yield select(getURL(name)(methodName))
