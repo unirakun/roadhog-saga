@@ -33,10 +33,7 @@ Array [
     "value": Array [
       "url:url:http://an-url//pathPrams:[\"an\",\"great\",\"array\"]//queryParams:{\"an\":\"object\",\"that\":\"rocks\"}",
       Object {
-        "body": Object {
-          "a": "body",
-          "to": "send",
-        },
+        "body": "string body",
         "some": "options",
       },
     ],
@@ -80,6 +77,92 @@ Array [
       "url:url:http://an-url//pathPrams:undefined//queryParams:undefined",
       Object {
         "body": undefined,
+        "some": "options",
+      },
+    ],
+  },
+]
+`;
+
+exports[`mapToFetch should stringify JS body 1`] = `
+Array [
+  Object {
+    "raw": Object {
+      "done": false,
+      "value": Object {
+        "@@redux-saga/IO": true,
+        "SELECT": Object {
+          "args": Array [],
+          "selector": [Function],
+        },
+      },
+    },
+    "value": Object {
+      "some": "options",
+    },
+  },
+  Object {
+    "raw": Object {
+      "done": false,
+      "value": Object {
+        "@@redux-saga/IO": true,
+        "SELECT": Object {
+          "args": Array [],
+          "selector": [Function],
+        },
+      },
+    },
+    "value": "http://an-url",
+  },
+  Object {
+    "done": true,
+    "value": Array [
+      "url:url:http://an-url//pathPrams:undefined//queryParams:undefined",
+      Object {
+        "body": "{\"a\":\"body\"}",
+        "some": "options",
+      },
+    ],
+  },
+]
+`;
+
+exports[`mapToFetch should stringify JS body 2`] = `
+Array [
+  Object {
+    "raw": Object {
+      "done": false,
+      "value": Object {
+        "@@redux-saga/IO": true,
+        "SELECT": Object {
+          "args": Array [],
+          "selector": [Function],
+        },
+      },
+    },
+    "value": Object {
+      "some": "options",
+    },
+  },
+  Object {
+    "raw": Object {
+      "done": false,
+      "value": Object {
+        "@@redux-saga/IO": true,
+        "SELECT": Object {
+          "args": Array [],
+          "selector": [Function],
+        },
+      },
+    },
+    "value": "http://an-url",
+  },
+  Object {
+    "done": true,
+    "value": Array [
+      "url:url:http://an-url//pathPrams:undefined//queryParams:undefined",
+      Object {
+        "body": "[{\"some\":\"info\"},{\"other\":\"infos\"}]",
         "some": "options",
       },
     ],
