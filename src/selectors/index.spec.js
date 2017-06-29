@@ -91,11 +91,7 @@ describe('selectors', () => {
       const state = {
         config: {
           api: {
-            name1: {
-              GET: {
-                some: 'method info',
-              },
-            },
+            name1: 'url',
           },
         },
       }

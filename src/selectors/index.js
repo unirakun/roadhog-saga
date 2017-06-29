@@ -15,7 +15,7 @@ export const getOptions = name => methodName => (state) => {
   let options = { method: methodName }
   if (api.options) options = { ...options, ...api.options }
   if (resource.options) options = { ...options, ...resource.options }
-  if (method.options) options = { ...options, ...method.options }
+  if (method && method.options) options = { ...options, ...method.options }
 
   return options
 }
