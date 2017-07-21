@@ -1,0 +1,44 @@
+exports[`mapToData should return fallback -ko- 1`] = `
+Array [
+  Object {
+    "done": true,
+    "value": Object {
+      "fallback": true,
+    },
+  },
+]
+`;
+
+exports[`mapToData should return result -ko- 1`] = `
+Array [
+  Object {
+    "done": false,
+    "value": Object {
+      "data": true,
+    },
+  },
+  Object {
+    "done": true,
+    "value": Object {
+      "data": true,
+    },
+  },
+]
+`;
+
+exports[`mapToData should return result -ok- 1`] = `
+Array [
+  Object {
+    "done": false,
+    "value": Object {
+      "data": true,
+    },
+  },
+  Object {
+    "done": true,
+    "value": Object {
+      "data": true,
+    },
+  },
+]
+`;

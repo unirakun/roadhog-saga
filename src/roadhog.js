@@ -1,8 +1,9 @@
-import { select } from 'redux-saga/effects'
-import tracer from './tracer'
+import { select, put, call } from 'redux-saga/effects'
 import { isAction } from './checkers'
-import { mapToFetch } from './mappers'
+import { mapToFetch, mapToData } from './mappers'
 import { getFallback } from './selectors'
+
+const apiEvent = (name, suffix, payload) => ({ type: `API_${name}_${suffix}`, payload })
 
 /**
  * Library that is connected to redux, use to fetch api, and to dispatch saga event
@@ -23,9 +24,14 @@ export default action => function* (inputs) {
   const fallback = yield select(getFallback(url)(options.method))
 
   // get the raw response, from tracer or from fetch
-  const raw = yield tracer(action, () => fetch(url, options), !fallback)()
+  yield put(apiEvent(action, 'STARTED'))
+  const raw = yield fetch(url, options)
+
+  // retrieve data (either from request, either from mock -fallback-)
+  const data = yield mapToData(fallback)(raw)
+  if (!raw.ok && !fallback) yield put(apiEvent(action, 'ERROR', { raw, data, status: raw.status, statusText: raw.statusText }))
 
   // return json response or fallback
-  if (raw.ok) return yield raw.json()
-  return fallback
+  yield put(apiEvent(action, 'END', { raw, data }))
+  return data
 }

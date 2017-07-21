@@ -1,22 +1,21 @@
 /* eslint-env jest */
 import tester from 'trampss-redux-saga-tester'
 
-jest.mock('./tracer')
 jest.mock('./checkers', () => ({
   isAction: () => true,
 }))
 jest.mock('./mappers', () => ({
   mapToFetch: () => () => ['http://an-url', { some: 'options' }],
+  mapToData: fallback => raw => (raw.ok && raw.json()) || fallback,
 }))
 
-const tracer = require('./tracer').default
 const roadhog = require('./roadhog').default
 
 describe('roadhog', () => {
   const test = tester(roadhog('GET_TODOS'))(/* no inputs */)
 
   it('should return API returns (ok case)', () => {
-    tracer.mockImplementation(() => () => ({ ok: true, json: () => ({ some: 'value' }) }))
+    window.fetch = jest.fn(() => ({ ok: true, json: () => ({ some: 'value' }) }))
 
     expect(
       test({
@@ -26,7 +25,7 @@ describe('roadhog', () => {
   })
 
   it('should return fallback (ko case)', () => {
-    tracer.mockImplementation(() => () => ({ ok: false }))
+    window.fetch = jest.fn(() => ({ ok: false, json: () => ({ some: 'value' }) }))
 
     expect(
       test({
