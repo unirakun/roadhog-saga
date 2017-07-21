@@ -1,4 +1,4 @@
-import { select, put, call } from 'redux-saga/effects'
+import { select, put } from 'redux-saga/effects'
 import { isAction } from './checkers'
 import { mapToFetch, mapToData } from './mappers'
 import { getFallback } from './selectors'
