@@ -33,4 +33,13 @@ describe('roadhog', () => {
       }),
     ).toMatchSnapshot()
   })
+
+  it('should trigger an error event', () => {
+    window.fetch = jest.fn(() => ({ ok: false, json: () => ({ some: 'value' }) }))
+    expect(
+      test({
+        select: [() => undefined],
+      }),
+    ).toMatchSnapshot()
+  })
 })

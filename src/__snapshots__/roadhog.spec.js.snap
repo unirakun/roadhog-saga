@@ -151,3 +151,98 @@ Array [
   },
 ]
 `;
+
+exports[`roadhog should trigger an error event 1`] = `
+Array [
+  Object {
+    "done": false,
+    "value": Array [
+      "http://an-url",
+      Object {
+        "some": "options",
+      },
+    ],
+  },
+  Object {
+    "raw": Object {
+      "done": false,
+      "value": Object {
+        "@@redux-saga/IO": true,
+        "SELECT": Object {
+          "args": Array [],
+          "selector": [Function],
+        },
+      },
+    },
+    "value": undefined,
+  },
+  Object {
+    "done": false,
+    "value": Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": undefined,
+          "type": "API_GET_TODOS_STARTED",
+        },
+        "channel": null,
+      },
+    },
+  },
+  Object {
+    "done": false,
+    "value": Object {
+      "json": [Function],
+      "ok": false,
+    },
+  },
+  Object {
+    "done": false,
+    "value": undefined,
+  },
+  Object {
+    "done": false,
+    "value": Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "data": undefined,
+            "raw": Object {
+              "json": [Function],
+              "ok": false,
+            },
+            "status": undefined,
+            "statusText": undefined,
+          },
+          "type": "API_GET_TODOS_ERROR",
+        },
+        "channel": null,
+      },
+    },
+  },
+  Object {
+    "done": false,
+    "value": Object {
+      "@@redux-saga/IO": true,
+      "PUT": Object {
+        "action": Object {
+          "payload": Object {
+            "data": undefined,
+            "raw": Object {
+              "json": [Function],
+              "ok": false,
+            },
+          },
+          "type": "API_GET_TODOS_END",
+        },
+        "channel": null,
+      },
+    },
+  },
+  Object {
+    "done": true,
+    "value": undefined,
+  },
+]
+`;
