@@ -1,2 +1,419 @@
-!function(t,n){"object"==typeof exports&&"undefined"!=typeof module?module.exports=n(require("redux-saga/effects")):"function"==typeof define&&define.amd?define(["redux-saga/effects"],n):t["roadhog-saga"]=n(t.reduxSaga_effects)}(this,function(t){"use strict";var n=function(t){if(!/.*_.*/.test(t))throw new Error("Wrong format for action: '"+t+"'. should be '<METHOD_NAME>_<RESOURCE_NAME>' (ie: GET_USERS)")},r="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},e=Object.assign||function(t){for(var n=1;n<arguments.length;n++){var r=arguments[n];for(var e in r)Object.prototype.hasOwnProperty.call(r,e)&&(t[e]=r[e])}return t},o=function(){function t(t,n){var r=[],e=!0,o=!1,u=void 0;try{for(var i,a=t[Symbol.iterator]();!(e=(i=a.next()).done)&&(r.push(i.value),!n||r.length!==n);e=!0);}catch(t){o=!0,u=t}finally{try{!e&&a.return&&a.return()}finally{if(o)throw u}}return r}return function(n,r){if(Array.isArray(n))return n;if(Symbol.iterator in Object(n))return t(n,r);throw new TypeError("Invalid attempt to destructure non-iterable instance")}}(),u=function(t){if(Array.isArray(t)){for(var n=0,r=Array(t.length);n<t.length;n++)r[n]=t[n];return r}return Array.from(t)},i=function(t){return t.config},a=function(t){return i(t).api},c=function(t){return i(t).mocks},f=function(t){return function(n){return a(n)[t]}},s=function(t){return function(n){return function(r){return f(t)(r)[n]}}},p=function(t){return function(n){return function(r){var o=a(r),u=f(t)(r),i=s(t)(n)(r),c={method:n};return o.options&&(c=e({},c,o.options)),u.options&&(c=e({},c,u.options)),i&&i.options&&(c=e({},c,i.options)),c}}},d=function(t){return function(n){return function(r){var e=f(t)(r),o=s(t)(n)(r);return void 0===o?e:"string"==typeof o?o:o.url}}},y=function(t){return function(n){return function(r){var e=c(r);if(e)return([].concat(u(e.filter(function(t){return t.method===n})),u(e.filter(function(t){return void 0===t.method})),u(e.filter(function(t){return t.method!==n&&void 0!==t.method}))).find(function(n){return n.match.test(t)})||{}).fallback}}},l=function(t){return Array.isArray(t)?t.map(function(t){return encodeURIComponent(t)}):encodeURIComponent(t)},h=function(t){return!t||"object"===(void 0===t?"undefined":r(t))&&0===Object.keys(t).length||Array.isArray(t)&&0===t.length},m=function(t){return function(n){return h(n)?t:t+(t.endsWith("/")?"":"/")+l(n).join("/")}},b=function(t){return function(n){if(h(n))return t;var r=Object.keys(n).map(function(t){return t+"="+l(n[t])}),e=t.endsWith("/")||t.endsWith("&")||t.endsWith("?")?"":"/",o=t.endsWith("&")||t.endsWith("?")?"":"?";return""+t+e+o+r.join("&")}},g=function(n){return regeneratorRuntime.mark(function r(){var u,i,a,c,f,s,y,l=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};return regeneratorRuntime.wrap(function(r){for(;;)switch(r.prev=r.next){case 0:return u=n.split(/_(.+)/),i=o(u,2),a=i[0],c=i[1],r.next=3,t.select(p(c)(a));case 3:return f=r.sent,s=l.body,f="string"==typeof s?e({},f,{body:s}):e({},f,{body:JSON.stringify(s)}),r.next=8,t.select(d(c)(a));case 8:return y=r.sent,y=m(y)(l.path),y=b(y)(l.query),r.abrupt("return",[y,f]);case 12:case"end":return r.stop()}},r,this)})},v=function(t){return regeneratorRuntime.mark(function n(r){return regeneratorRuntime.wrap(function(n){for(;;)switch(n.prev=n.next){case 0:if(r.ok||!t){n.next=2;break}return n.abrupt("return",t);case 2:return n.next=4,r.json();case 4:return n.abrupt("return",n.sent);case 5:case"end":return n.stop()}},n,this)})},x=function(t,n,r){return{type:"API_"+t+"_"+n,payload:r}};return function(r){return regeneratorRuntime.mark(function e(u){var i,a,c,f,s,p,d;return regeneratorRuntime.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:return n(r),e.next=3,g(r)(u);case 3:return i=e.sent,a=o(i,2),c=a[0],f=a[1],e.next=9,t.select(y(c)(f.method));case 9:return s=e.sent,e.next=12,t.put(x(r,"STARTED"));case 12:return e.next=14,fetch(c,f);case 14:return p=e.sent,e.next=17,v(s)(p);case 17:if(d=e.sent,p.ok||s){e.next=21;break}return e.next=21,t.put(x(r,"ERROR",{raw:p,data:d,status:p.status,statusText:p.statusText}));case 21:return e.next=23,t.put(x(r,"END",{raw:p,data:d}));case 23:return e.abrupt("return",d);case 24:case"end":return e.stop()}},e,this)})}});
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('redux-saga/effects')) :
+	typeof define === 'function' && define.amd ? define(['redux-saga/effects'], factory) :
+	(global['roadhog-saga'] = factory(global.reduxSaga_effects));
+}(this, (function (reduxSaga_effects) { 'use strict';
+
+var isAction = (function (action) {
+  if (!/.*_.*/.test(action)) {
+    throw new Error("Wrong format for action: '" + action + "'. should be '<METHOD_NAME>_<RESOURCE_NAME>' (ie: GET_USERS)");
+  }
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+
+
+
+
+
+
+
+
+
+
+
+
+
+var toConsumableArray = function (arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  } else {
+    return Array.from(arr);
+  }
+};
+
+var getConfig = function getConfig(_ref) {
+  var config = _ref.config;
+  return config;
+};
+var getAPI = function getAPI(state) {
+  return getConfig(state).api;
+};
+var getMocks = function getMocks(state) {
+  return getConfig(state).mocks;
+};
+var getResource = function getResource(name) {
+  return function (state) {
+    return getAPI(state)[name];
+  };
+};
+
+var getMethod = function getMethod(name) {
+  return function (methodName) {
+    return function (state) {
+      return getResource(name)(state)[methodName];
+    };
+  };
+};
+
+var getOptions = function getOptions(name) {
+  return function (methodName) {
+    return function (state) {
+      // raw data
+      var api = getAPI(state);
+      var resource = getResource(name)(state);
+      var method = getMethod(name)(methodName)(state);
+
+      // order is general -> specific
+      var options = { method: methodName };
+      if (api.options) options = _extends({}, options, api.options);
+      if (resource.options) options = _extends({}, options, resource.options);
+      if (method && method.options) options = _extends({}, options, method.options);
+
+      return options;
+    };
+  };
+};
+
+var getURL = function getURL(name) {
+  return function (methodName) {
+    return function (state) {
+      // raw data
+      var resource = getResource(name)(state);
+      var method = getMethod(name)(methodName)(state);
+
+      if (method === undefined) return resource; // example: { TODOS: '/api/todos' }
+      if (typeof method === 'string') return method; // example : { TODOS: { GET: '/api/todos' } }
+      return method.url; // example: { TODOS: { GET: { url: '/api/todos' } } }
+    };
+  };
+};
+
+var getFallback = function getFallback(url) {
+  return function (methodName) {
+    return function (state) {
+      var mocks = getMocks(state);
+      if (!mocks) return undefined;
+
+      // mock by priority
+      var orderedMocks = [].concat(toConsumableArray(mocks.filter(function (m) {
+        return m.method === methodName;
+      })), toConsumableArray(mocks.filter(function (m) {
+        return m.method === undefined;
+      })), toConsumableArray(mocks.filter(function (m) {
+        return m.method !== methodName && m.method !== undefined;
+      })));
+
+      // looking for right mock
+      var mock = orderedMocks.find(function (m) {
+        return m.match.test(url);
+      });
+
+      // returns fallback
+      return (mock || {}).fallback;
+    };
+  };
+};
+
+var encodeParams = function encodeParams(params) {
+  if (!Array.isArray(params)) return encodeURIComponent(params);
+  return params.map(function (param) {
+    return encodeURIComponent(param);
+  });
+};
+
+var isEmpty = function isEmpty(o) {
+  return !o || (typeof o === 'undefined' ? 'undefined' : _typeof(o)) === 'object' && Object.keys(o).length === 0 || Array.isArray(o) && o.length === 0;
+};
+
+var addPathParams = (function (url) {
+  return function (pathParams) {
+    if (isEmpty(pathParams)) return url;
+    return '' + url + (url.endsWith('/') ? '' : '/') + encodeParams(pathParams).join('/');
+  };
+});
+
+var addQueryParams = (function (url) {
+  return function (queryParams) {
+    if (isEmpty(queryParams)) return url;
+
+    var params = Object.keys(queryParams).map(function (k) {
+      return k + '=' + encodeParams(queryParams[k]);
+    });
+
+    var slash = url.endsWith('/') || url.endsWith('&') || url.endsWith('?') ? '' : '/';
+    var questionMark = url.endsWith('&') || url.endsWith('?') ? '' : '?';
+
+    return '' + url + slash + questionMark + params.join('&');
+  };
+});
+
+// FIXME : this code could be replaced with this lib if the bundle is not too big:
+// path : https://github.com/snd/url-pattern
+// query : https://github.com/ljharb/qs
+
+var mapToFetch = (function (action) {
+  return regeneratorRuntime.mark(function _callee() {
+    var inputs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    var _action$split, _action$split2, methodName, name, options, body, url;
+
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            // action pattern is `<METHOD_NAME>_<RESOURCE_NAME>`
+            _action$split = action.split(/_(.+)/), _action$split2 = slicedToArray(_action$split, 2), methodName = _action$split2[0], name = _action$split2[1];
+
+            // create a fetch options object
+
+            _context.next = 3;
+            return reduxSaga_effects.select(getOptions(name)(methodName));
+
+          case 3:
+            options = _context.sent;
+
+
+            // body
+            // - body is an object : use JSON.stringify
+            // - body is a string : let it that way
+            body = inputs.body;
+
+            if (typeof body === 'string') options = _extends({}, options, { body: body });else options = _extends({}, options, { body: JSON.stringify(body) });
+
+            // create a fetch url
+            _context.next = 8;
+            return reduxSaga_effects.select(getURL(name)(methodName));
+
+          case 8:
+            url = _context.sent;
+
+            url = addPathParams(url)(inputs.path);
+            url = addQueryParams(url)(inputs.query);
+
+            return _context.abrupt('return', [url, options]);
+
+          case 12:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  });
+});
+
+var mapToData = (function (fallback) {
+  return regeneratorRuntime.mark(function _callee(raw) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            if (!(!raw.ok && fallback)) {
+              _context.next = 2;
+              break;
+            }
+
+            return _context.abrupt("return", fallback);
+
+          case 2:
+            if (!(raw.status !== 204)) {
+              _context.next = 6;
+              break;
+            }
+
+            _context.next = 5;
+            return raw.json();
+
+          case 5:
+            return _context.abrupt("return", _context.sent);
+
+          case 6:
+            return _context.abrupt("return", undefined);
+
+          case 7:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  });
+});
+
+var apiEvent = function apiEvent(name, suffix, payload) {
+  return { type: 'API_' + name + '_' + suffix, payload: payload };
+};
+
+/**
+ * Library that is connected to redux, use to fetch api, and to dispatch saga event
+ * @param {string} action -
+ *   the template of action is like this '<METHOD_NAME>_<RESOURCE_NAME>' => GET_USERS
+ * @param {object} inputs -
+ *   object contains body, query and path params => {body, query: {id: 1}, path: [user, 132]}
+ * @return {object} - api response or fallback define on redux.
+ */
+var roadhog = (function (action) {
+  return regeneratorRuntime.mark(function _callee(inputs) {
+    var _ref, _ref2, url, options, fallback, raw, data;
+
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            // check action pattern and eventually throw errors
+            isAction(action);
+
+            // get fetch options to make a fetch callback
+            _context.next = 3;
+            return mapToFetch(action)(inputs);
+
+          case 3:
+            _ref = _context.sent;
+            _ref2 = slicedToArray(_ref, 2);
+            url = _ref2[0];
+            options = _ref2[1];
+            _context.next = 9;
+            return reduxSaga_effects.select(getFallback(url)(options.method));
+
+          case 9:
+            fallback = _context.sent;
+            _context.next = 12;
+            return reduxSaga_effects.put(apiEvent(action, 'STARTED'));
+
+          case 12:
+            _context.next = 14;
+            return fetch(url, options);
+
+          case 14:
+            raw = _context.sent;
+            _context.next = 17;
+            return mapToData(fallback)(raw);
+
+          case 17:
+            data = _context.sent;
+
+            if (!(!raw.ok && !fallback)) {
+              _context.next = 21;
+              break;
+            }
+
+            _context.next = 21;
+            return reduxSaga_effects.put(apiEvent(action, 'ERROR', { raw: raw, data: data, status: raw.status, statusText: raw.statusText }));
+
+          case 21:
+            _context.next = 23;
+            return reduxSaga_effects.put(apiEvent(action, 'END', { raw: raw, data: data }));
+
+          case 23:
+            return _context.abrupt('return', data);
+
+          case 24:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  });
+});
+
+return roadhog;
+
+})));
 //# sourceMappingURL=index.js.map
