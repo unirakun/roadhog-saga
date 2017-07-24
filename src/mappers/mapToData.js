@@ -1,4 +1,5 @@
 export default fallback => function* (raw) {
   if (!raw.ok && fallback) return fallback
-  return yield raw.json()
+  if (raw.status !== 204) return yield raw.json()
+  return undefined
 }

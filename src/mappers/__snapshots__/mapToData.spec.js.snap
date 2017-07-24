@@ -42,3 +42,12 @@ Array [
   },
 ]
 `;
+
+exports[`mapToData should return undefined -code 204 no content- 1`] = `
+Array [
+  Object {
+    "done": true,
+    "value": undefined,
+  },
+]
+`;
