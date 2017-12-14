@@ -28,4 +28,10 @@ describe('mapToData', () => {
     const test = tester(mapToData(/* no fallback */))(raw)(/* no mock */)
     expect(test).toMatchSnapshot()
   })
+
+  it('should return undefined with json parse on error', () => {
+    const raw = { ok: true, json: () => { throw new Error('PARSING ERROR') } }
+    const test = tester(mapToData(fallback))(raw)(/* no mock */)
+    expect(test).toMatchSnapshot()
+  })
 })
