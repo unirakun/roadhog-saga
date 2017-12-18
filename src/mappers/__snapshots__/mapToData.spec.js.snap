@@ -1,4 +1,4 @@
-exports[`mapToData should return fallback -ko- 1`] = `
+exports[`mapToData with json content-type should return fallback -ko- 1`] = `
 Array [
   Object {
     "done": true,
@@ -9,41 +9,58 @@ Array [
 ]
 `;
 
-exports[`mapToData should return result -ko- 1`] = `
+exports[`mapToData with json content-type should return result -ko- 1`] = `
 Array [
   Object {
     "done": false,
     "value": Object {
-      "data": true,
+      "data": "JSON",
     },
   },
   Object {
     "done": true,
     "value": Object {
-      "data": true,
+      "data": "JSON",
     },
   },
 ]
 `;
 
-exports[`mapToData should return result -ok- 1`] = `
+exports[`mapToData with json content-type should return result -ok- 1`] = `
 Array [
   Object {
     "done": false,
     "value": Object {
-      "data": true,
+      "data": "JSON",
     },
   },
   Object {
     "done": true,
     "value": Object {
-      "data": true,
+      "data": "JSON",
     },
   },
 ]
 `;
 
-exports[`mapToData should return undefined -code 204 no content- 1`] = `
+exports[`mapToData with json content-type should return text with json parse on error 1`] = `
+Array [
+  Object {
+    "done": false,
+    "value": Object {
+      "data": "TEXT",
+    },
+  },
+  Object {
+    "done": true,
+    "value": Object {
+      "data": "TEXT",
+    },
+  },
+]
+`;
+
+exports[`mapToData with json content-type should return undefined -code 204 no content- 1`] = `
 Array [
   Object {
     "done": true,
@@ -52,11 +69,68 @@ Array [
 ]
 `;
 
-exports[`mapToData should return undefined with json parse on error 1`] = `
+exports[`mapToData with json content-type should throw error when json parse and text parse on error 1`] = `"PARSING ERROR"`;
+
+exports[`mapToData with no content-type should return text when content-type is undefined 1`] = `
 Array [
   Object {
+    "done": false,
+    "value": Object {
+      "data": "TEXT",
+    },
+  },
+  Object {
     "done": true,
-    "value": undefined,
+    "value": Object {
+      "data": "TEXT",
+    },
   },
 ]
 `;
+
+exports[`mapToData with plain/text content-type should return fallback -ko- 1`] = `
+Array [
+  Object {
+    "done": true,
+    "value": Object {
+      "fallback": true,
+    },
+  },
+]
+`;
+
+exports[`mapToData with plain/text content-type should return result -ko- 1`] = `
+Array [
+  Object {
+    "done": false,
+    "value": Object {
+      "data": "TEXT",
+    },
+  },
+  Object {
+    "done": true,
+    "value": Object {
+      "data": "TEXT",
+    },
+  },
+]
+`;
+
+exports[`mapToData with plain/text content-type should return result -ok- 1`] = `
+Array [
+  Object {
+    "done": false,
+    "value": Object {
+      "data": "TEXT",
+    },
+  },
+  Object {
+    "done": true,
+    "value": Object {
+      "data": "TEXT",
+    },
+  },
+]
+`;
+
+exports[`mapToData with plain/text content-type should throw error when text parse on error 1`] = `"PARSING ERROR"`;

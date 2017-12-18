@@ -1,37 +1,86 @@
 /* eslint-env jest */
 import tester from 'trampss-redux-saga-tester'
+import 'whatwg-fetch'
 import mapToData from './mapToData'
 
 describe('mapToData', () => {
   const fallback = { fallback: true }
+  const error = 'PARSING ERROR'
+  const onError = () => { throw new Error(error) }
 
-  it('should return result -ok-', () => {
-    const raw = { ok: true, json: () => ({ data: true }) }
-    const test = tester(mapToData(fallback))(raw)(/* no mock */)
-    expect(test).toMatchSnapshot()
+  describe('with json content-type', () => {
+    const jsonRaw = { headers: new Headers({ 'content-type': 'application/json' }), json: () => ({ data: 'JSON' }), text: () => ({ data: 'TEXT' }) }
+
+    it('should return undefined -code 204 no content-', () => {
+      const raw = { ...jsonRaw, ok: true, status: 204 }
+      const test = tester(mapToData(fallback))(raw)(/* no mock */)
+      expect(test).toMatchSnapshot()
+    })
+
+    it('should return result -ok-', () => {
+      const raw = { ...jsonRaw, ok: true }
+      const test = tester(mapToData(fallback))(raw)(/* no mock */)
+      expect(test).toMatchSnapshot()
+    })
+
+    it('should return fallback -ko-', () => {
+      const raw = { ...jsonRaw, ok: false }
+      const test = tester(mapToData(fallback))(raw)(/* no mock */)
+      expect(test).toMatchSnapshot()
+    })
+
+    it('should return result -ko-', () => {
+      const raw = { ...jsonRaw, ok: false }
+      const test = tester(mapToData(/* no fallback */))(raw)(/* no mock */)
+      expect(test).toMatchSnapshot()
+    })
+
+    it('should return text with json parse on error', () => {
+      const raw = { ...jsonRaw, ok: true, json: onError }
+      const test = tester(mapToData(fallback))(raw)(/* no mock */)
+      expect(test).toMatchSnapshot()
+    })
+
+    it('should throw error when json parse and text parse on error', () => {
+      const raw = { ...jsonRaw, ok: true, json: onError, text: onError }
+      const test = () => tester(mapToData(fallback))(raw)(/* no mock */)
+      expect(test).toThrowErrorMatchingSnapshot()
+    })
   })
 
-  it('should return undefined -code 204 no content-', () => {
-    const raw = { ok: true, status: 204, json: () => ({ data: true }) }
-    const test = tester(mapToData(fallback))(raw)(/* no mock */)
-    expect(test).toMatchSnapshot()
+  describe('with plain/text content-type', () => {
+    const textRaw = { headers: new Headers({ 'content-type': 'text/plain' }), json: onError, text: () => ({ data: 'TEXT' }) }
+
+    it('should return result -ok-', () => {
+      const raw = { ...textRaw, ok: true }
+      const test = tester(mapToData(fallback))(raw)(/* no mock */)
+      expect(test).toMatchSnapshot()
+    })
+
+    it('should return fallback -ko-', () => {
+      const raw = { ...textRaw, ok: false }
+      const test = tester(mapToData(fallback))(raw)(/* no mock */)
+      expect(test).toMatchSnapshot()
+    })
+
+    it('should return result -ko-', () => {
+      const raw = { ...textRaw, ok: false }
+      const test = tester(mapToData(/* no fallback */))(raw)(/* no mock */)
+      expect(test).toMatchSnapshot()
+    })
+
+    it('should throw error when text parse on error', () => {
+      const raw = { ...textRaw, ok: true, text: onError }
+      const test = () => tester(mapToData(fallback))(raw)(/* no mock */)
+      expect(test).toThrowErrorMatchingSnapshot()
+    })
   })
 
-  it('should return fallback -ko-', () => {
-    const raw = { ok: false, json: () => ({ data: true }) }
-    const test = tester(mapToData(fallback))(raw)(/* no mock */)
-    expect(test).toMatchSnapshot()
-  })
-
-  it('should return result -ko-', () => {
-    const raw = { ok: false, json: () => ({ data: true }) }
-    const test = tester(mapToData(/* no fallback */))(raw)(/* no mock */)
-    expect(test).toMatchSnapshot()
-  })
-
-  it('should return undefined with json parse on error', () => {
-    const raw = { ok: true, json: () => { throw new Error('PARSING ERROR') } }
-    const test = tester(mapToData(fallback))(raw)(/* no mock */)
-    expect(test).toMatchSnapshot()
+  describe('with no content-type', () => {
+    it('should return text when content-type is undefined', () => {
+      const raw = { ok: true, headers: new Headers(), text: () => ({ data: 'TEXT' }) }
+      const test = tester(mapToData(fallback))(raw)(/* no mock */)
+      expect(test).toMatchSnapshot()
+    })
   })
 })
