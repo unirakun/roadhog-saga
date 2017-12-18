@@ -1,6 +1,6 @@
 {
   "name": "roadhog-saga",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Library that is connected to redux, use to fetch api, and to dispatch saga event",
   "license": "MIT",
   "main": "index.js",
@@ -47,7 +47,7 @@
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-uglify": "^2.0.1",
     "sinon": "^1.17.7",
-    "trampss-redux-saga-tester": "^1.0.0"
+    "k-redux-saga-tester": "^1.0.0"
   },
   "babel": {
     "plugins": [
