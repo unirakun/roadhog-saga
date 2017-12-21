@@ -13,15 +13,11 @@ exports[`mapToData with json content-type should return result -ko- 1`] = `
 Array [
   Object {
     "done": false,
-    "value": Object {
-      "data": "JSON",
-    },
+    "value": "TEXT",
   },
   Object {
     "done": true,
-    "value": Object {
-      "data": "JSON",
-    },
+    "value": "TEXT",
   },
 ]
 `;
@@ -30,15 +26,11 @@ exports[`mapToData with json content-type should return result -ok- 1`] = `
 Array [
   Object {
     "done": false,
-    "value": Object {
-      "data": "JSON",
-    },
+    "value": "TEXT",
   },
   Object {
     "done": true,
-    "value": Object {
-      "data": "JSON",
-    },
+    "value": "TEXT",
   },
 ]
 `;

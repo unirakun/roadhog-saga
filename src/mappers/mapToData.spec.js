@@ -1,6 +1,5 @@
 /* eslint-env jest */
 import tester from 'trampss-redux-saga-tester'
-import 'whatwg-fetch'
 import mapToData from './mapToData'
 
 describe('mapToData', () => {
@@ -9,7 +8,7 @@ describe('mapToData', () => {
   const onError = () => { throw new Error(error) }
 
   describe('with json content-type', () => {
-    const jsonRaw = { headers: new Headers({ 'content-type': 'application/json' }), json: () => ({ data: 'JSON' }), text: () => 'TEXT' }
+    const jsonRaw = { headers: new Map([['content-type', 'application/json']]), json: () => ({ data: 'JSON' }), text: () => 'TEXT' }
 
     it('should return undefined -code 204 no content-', () => {
       const raw = { ...jsonRaw, ok: true, status: 204 }
@@ -49,7 +48,7 @@ describe('mapToData', () => {
   })
 
   describe('with plain/text content-type', () => {
-    const textRaw = { headers: new Headers({ 'content-type': 'text/plain' }), json: onError, text: () => 'TEXT' }
+    const textRaw = { headers: new Map([['content-type', 'text/plain']]), json: onError, text: () => 'TEXT' }
 
     it('should return result -ok-', () => {
       const raw = { ...textRaw, ok: true }
@@ -78,7 +77,7 @@ describe('mapToData', () => {
 
   describe('with no content-type', () => {
     it('should return text when content-type is undefined', () => {
-      const raw = { ok: true, headers: new Headers(), text: () => 'TEXT' }
+      const raw = { ok: true, headers: new Map(), text: () => 'TEXT' }
       const test = tester(mapToData(fallback))(raw)(/* no mock */)
       expect(test).toMatchSnapshot()
     })
