@@ -47,15 +47,11 @@ exports[`mapToData with json content-type should return text with json parse on 
 Array [
   Object {
     "done": false,
-    "value": Object {
-      "data": "TEXT",
-    },
+    "value": "TEXT",
   },
   Object {
     "done": true,
-    "value": Object {
-      "data": "TEXT",
-    },
+    "value": "TEXT",
   },
 ]
 `;
@@ -75,15 +71,11 @@ exports[`mapToData with no content-type should return text when content-type is 
 Array [
   Object {
     "done": false,
-    "value": Object {
-      "data": "TEXT",
-    },
+    "value": "TEXT",
   },
   Object {
     "done": true,
-    "value": Object {
-      "data": "TEXT",
-    },
+    "value": "TEXT",
   },
 ]
 `;
@@ -103,15 +95,11 @@ exports[`mapToData with plain/text content-type should return result -ko- 1`] = 
 Array [
   Object {
     "done": false,
-    "value": Object {
-      "data": "TEXT",
-    },
+    "value": "TEXT",
   },
   Object {
     "done": true,
-    "value": Object {
-      "data": "TEXT",
-    },
+    "value": "TEXT",
   },
 ]
 `;
@@ -120,15 +108,11 @@ exports[`mapToData with plain/text content-type should return result -ok- 1`] = 
 Array [
   Object {
     "done": false,
-    "value": Object {
-      "data": "TEXT",
-    },
+    "value": "TEXT",
   },
   Object {
     "done": true,
-    "value": Object {
-      "data": "TEXT",
-    },
+    "value": "TEXT",
   },
 ]
 `;

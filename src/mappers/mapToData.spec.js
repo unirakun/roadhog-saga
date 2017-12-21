@@ -9,7 +9,7 @@ describe('mapToData', () => {
   const onError = () => { throw new Error(error) }
 
   describe('with json content-type', () => {
-    const jsonRaw = { headers: new Headers({ 'content-type': 'application/json' }), json: () => ({ data: 'JSON' }), text: () => ({ data: 'TEXT' }) }
+    const jsonRaw = { headers: new Headers({ 'content-type': 'application/json' }), json: () => ({ data: 'JSON' }), text: () => 'TEXT' }
 
     it('should return undefined -code 204 no content-', () => {
       const raw = { ...jsonRaw, ok: true, status: 204 }
@@ -49,7 +49,7 @@ describe('mapToData', () => {
   })
 
   describe('with plain/text content-type', () => {
-    const textRaw = { headers: new Headers({ 'content-type': 'text/plain' }), json: onError, text: () => ({ data: 'TEXT' }) }
+    const textRaw = { headers: new Headers({ 'content-type': 'text/plain' }), json: onError, text: () => 'TEXT' }
 
     it('should return result -ok-', () => {
       const raw = { ...textRaw, ok: true }
@@ -78,7 +78,7 @@ describe('mapToData', () => {
 
   describe('with no content-type', () => {
     it('should return text when content-type is undefined', () => {
-      const raw = { ok: true, headers: new Headers(), text: () => ({ data: 'TEXT' }) }
+      const raw = { ok: true, headers: new Headers(), text: () => 'TEXT' }
       const test = tester(mapToData(fallback))(raw)(/* no mock */)
       expect(test).toMatchSnapshot()
     })
