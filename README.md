@@ -3,7 +3,7 @@ Easy API fetching with configuration stored into Redux.
 
 > Fetch your API easily with Redux and `redux-saga` !
 
-[![CircleCI](https://circleci.com/gh/alakarteio/roadhog-saga.svg?&style=shield&circle-token=)](https://circleci.com/gh/alakarteio/roadhog-saga/tree/master) [![NPM Version](https://badge.fury.io/js/roadhog-saga.svg)](https://www.npmjs.com/package/roadhog-saga) [![Coverage Status](https://coveralls.io/repos/github/alakarteio/roadhog-saga/badge.svg?branch=master)](https://coveralls.io/github/alakarteio/roadhog-saga?branch=master) [![Size](http://img.badgesize.io/Trampss/roadhog-saga/master/index.js.svg)]()
+[![CircleCI](https://circleci.com/gh/unirakun/roadhog-saga.svg?&style=shield&circle-token=)](https://circleci.com/gh/unirakun/roadhog-saga/tree/master) [![NPM Version](https://badge.fury.io/js/roadhog-saga.svg)](https://www.npmjs.com/package/roadhog-saga) [![Coverage Status](https://coveralls.io/repos/github/unirakun/roadhog-saga/badge.svg?branch=master)](https://coveralls.io/github/unirakun/roadhog-saga?branch=master) [![Size](http://img.badgesize.io/Trampss/roadhog-saga/master/index.js.svg)]()
 
 
 ## Installation
@@ -93,10 +93,10 @@ yield takeEvery(
 yield takeEvery(action => /API_.*?_ERROR/, /* log an error */)
 ```
 
-# About ![alakarteio](http://alakarte.io/assets/img/logo.markdown.png)
-**alakarteio** is created by two passionate french developers.
+# About uni rakun ![unirakun](https://avatars3.githubusercontent.com/u/26111459?s=50&v=4)
+**uni rakun** is created by two passionate french developers.
 
-Do you want to contact them ? Go to their [website](http://alakarte.io)
+Do you want to contact them ? Go to their [website](https://unirakun.fr)
 
 <table border="0">
  <tr>
